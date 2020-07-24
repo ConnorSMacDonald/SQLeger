@@ -37,7 +37,7 @@ template <typename T>
 void delete_type_erased(void* type_erased) noexcept;
 
 
-// ============================================================================
+// =============================================================================
 
 
 constexpr typeless::typeless(void* const ptr) noexcept : ptr_ {ptr} {}
