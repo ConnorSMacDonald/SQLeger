@@ -13,7 +13,7 @@ namespace sqleger {
 
 template <typename T>
 struct default_delete {
-  void operator()(T* pointer) const noexcept;
+  void operator()(T* ptr) const noexcept;
 };
 
 template <typename T>
@@ -24,9 +24,9 @@ using unique_ptr = std::unique_ptr<T, default_delete<T>>;
 
 
 template <typename T>
-void default_delete::operator()(T* const pointer) const noexcept
+void default_delete::operator()(T* const ptr) const noexcept
 {
-  ::sqlite3_free(pointer);
+  ::sqlite3_free(ptr);
 }
 
 
