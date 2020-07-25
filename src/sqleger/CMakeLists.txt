@@ -40,3 +40,15 @@ install(FILES
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/$<LOWER_CASE:${PROJECT_NAME}>
   DESTINATION include)
+
+if (${SQLEGER_BUILD_TESTS})
+
+  find_package(Catch2 REQUIRED)
+
+  include(CTest)
+
+  add_executable(zstring_Test zstring.test.cpp)
+  target_link_libraries(zstring_Test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME zstring_Test COMMAND zstring_Test)
+
+endif()

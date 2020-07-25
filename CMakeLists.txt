@@ -20,4 +20,6 @@ if (NOT SQLEGER_BUILD_TESTS)
     "Toggle building of Ieme tests")
 endif()
 
+enable_testing()
+
 add_subdirectory(src)
