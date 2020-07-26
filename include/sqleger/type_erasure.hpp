@@ -14,10 +14,10 @@ public:
   constexpr typeless() noexcept = default;
 
   template <typename T>
-  typeless(T* value) noexcept;
+  typeless(T* ptr) noexcept;
 
   template <typename T>
-  typeless(T& value) noexcept;
+  typeless(T& ref) noexcept;
 
   constexpr typeless(void* ptr) noexcept;
 
@@ -35,7 +35,7 @@ template <typename T>
 void* erase_type(T* ptr) noexcept;
 
 template <typename T>
-void* erase_type(T& value) noexcept;
+void* erase_type(T& ref) noexcept;
 
 template <typename T>
 T infer_type(void* type_erased) noexcept;
@@ -45,12 +45,12 @@ T infer_type(void* type_erased) noexcept;
 
 
 template <typename T>
-typeless::typeless(T* const value) noexcept : ptr_ {erase_type(value)}
+typeless::typeless(T* const ptr) noexcept : ptr_ {erase_type(ptr)}
 {
 }
 
 template <typename T>
-typeless::typeless(T& value) noexcept : ptr_ {erase_type(value)}
+typeless::typeless(T& ref) noexcept : ptr_ {erase_type(ref)}
 {
 }
 
