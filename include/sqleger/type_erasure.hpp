@@ -1,6 +1,7 @@
 #ifndef SQLEGER_TYPE_ERASURE_HPP_INCLUDED
 #define SQLEGER_TYPE_ERASURE_HPP_INCLUDED
 
+#include <memory>
 #include <type_traits>
 
 
@@ -12,10 +13,13 @@ class typeless {
 public:
   constexpr typeless() noexcept = default;
 
-  typeless(void* ptr) noexcept;
+  template <typename T>
+  typeless(T* value) noexcept;
 
   template <typename T>
-  typeless(T&& value) noexcept;
+  typeless(T& value) noexcept;
+
+  constexpr typeless(void* ptr) noexcept;
 
   template <typename T>
   T as() const noexcept;
@@ -28,25 +32,29 @@ private:
 
 
 template <typename T>
-void* erase_type(T&& value) noexcept;
+void* erase_type(T* ptr) noexcept;
+
+template <typename T>
+void* erase_type(T& value) noexcept;
 
 template <typename T>
 T infer_type(void* type_erased) noexcept;
-
-template <typename T>
-void delete_type_erased(void* type_erased) noexcept;
 
 
 // =============================================================================
 
 
-constexpr typeless::typeless(void* const ptr) noexcept : ptr_ {ptr} {}
-
 template <typename T>
-typeless::typeless(T&& value) noexcept :
-  ptr_ {erase_type(std::forward<T>(value))}
+typeless::typeless(T* const value) noexcept : ptr_ {erase_type(value)}
 {
 }
+
+template <typename T>
+typeless::typeless(T& value) noexcept : ptr_ {erase_type(value)}
+{
+}
+
+constexpr typeless::typeless(void* const ptr) noexcept : ptr_ {ptr} {}
 
 template <typename T>
 T typeless::as() const noexcept
@@ -54,14 +62,16 @@ T typeless::as() const noexcept
   return infer_type<T>(ptr_);
 }
 
+template <typename T>
+void* erase_type(T* const ptr) noexcept
+{
+  return reinterpret_cast<void*>(ptr);
+}
 
 template <typename T>
-void* erase_type(T&& value) noexcept
+void* erase_type(T& ref) noexcept
 {
-  if constexpr (std::is_pointer_v<T>)
-    return reinterpret_cast<void*>(value);
-  else if constexpr (std::is_lvalue_reference_v<T>)
-    return reinterpret_cast<void*>(&value);
+  return erase_type(std::addressof(ref));
 }
 
 template <typename T>
@@ -70,13 +80,8 @@ T infer_type(void* const ptr) noexcept
   if constexpr (std::is_pointer_v<T>)
     return reinterpret_cast<T>(ptr);
   else if constexpr (std::is_lvalue_reference_v<T>)
-    return *reinterpret_cast<add_pointer_t<remove_reference_t<T>>>(ptr);
-}
-
-template <typename T>
-void delete_type_erased(void* const ptr) noexcept
-{
-  delete reinterpret_cast<T*>(type_erased);
+    return *reinterpret_cast<std::add_pointer_t<std::remove_reference_t<T>>>(
+      ptr);
 }
 
 
