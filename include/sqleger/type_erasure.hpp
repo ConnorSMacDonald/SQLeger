@@ -80,8 +80,7 @@ T infer_type(void* const ptr) noexcept
   if constexpr (std::is_pointer_v<T>)
     return reinterpret_cast<T>(ptr);
   else if constexpr (std::is_lvalue_reference_v<T>)
-    return *reinterpret_cast<std::add_pointer_t<std::remove_reference_t<T>>>(
-      ptr);
+    return *reinterpret_cast<std::add_pointer_t<T>>(ptr);
 }
 
 
