@@ -47,12 +47,4 @@ if (${SQLEGER_BUILD_TESTS})
 
   include(CTest)
 
-  add_executable(type_erasure_Test type_erasure.test.cpp)
-  target_link_libraries(type_erasure_Test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
-  add_test(NAME type_erasure_Test COMMAND type_erasure_Test)
-
-  add_executable(zstring_Test zstring.test.cpp)
-  target_link_libraries(zstring_Test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
-  add_test(NAME zstring_Test COMMAND zstring_Test)
-
 endif()
