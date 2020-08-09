@@ -22,23 +22,21 @@ TEST_CASE("A result exception can be thrown and caught", "[exception]")
 
 TEST_CASE("An open exception can be thrown and caught", "[exception]")
 {
-  try
-  {
-    throw open_exception(result_t::error, "uh oh spaghettio");
-  }
-  catch (const open_exception& e)
-  {
-    REQUIRE(e.code() == result_t::error);
-    REQUIRE(e.what() == "uh oh spaghettio");
-  }
+  db d;
+  const auto r
+    = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open_t::readonly);
+
+  REQUIRE(r != result_t::ok);
+
+  const auto msg = static_cast<std::string>(d.errmsg());
 
   try
   {
-    throw open_exception(result_t::error, "uh oh spaghettio");
+    throw open_exception(r, std::move(d));
   }
-  catch (const result_exception& e)
+  catch (const open_exception& e)
   {
-    REQUIRE(e.code() == result_t::error);
-    REQUIRE(e.what() == "uh oh spaghettio");
+    REQUIRE(e.code() == r);
+    REQUIRE(e.what() == msg);
   }
 }

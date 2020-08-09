@@ -2,6 +2,7 @@
 #define SQLEGER_EXCEPTION_HPP
 
 #include <sqleger/constants.hpp>
+#include <sqleger/db_decl.hpp>
 
 #include <exception>
 
@@ -30,16 +31,14 @@ private:
 class open_exception : public result_exception {
 
 public:
-  inline open_exception(result_t code, const zstring_view& message) noexcept;
-
-  open_exception(const open_exception& other) noexcept = default;
+  inline open_exception(result_t code, db&& connection) noexcept;
 
   open_exception(open_exception&& other) noexcept = default;
 
   inline const char* what() const noexcept override;
 
 private:
-  const zstring_view message_;
+  db db_;
 };
 
 
@@ -55,20 +54,22 @@ const char* result_exception::what() const noexcept
   return errstr(code_);
 }
 
-open_exception::open_exception(const result_t code,
-                               const zstring_view& message) noexcept :
+open_exception::open_exception(const result_t code, db&& connection) noexcept :
   result_exception {code},
-  message_ {message}
+  db_ {std::move(connection)}
 {
 }
 
 const char* open_exception::what() const noexcept
 {
-  return message_;
+  return db_.errmsg();
 }
 
 
 }; // namespace sqleger
+
+
+#include <sqleger/db.hpp>
 
 
 #endif
