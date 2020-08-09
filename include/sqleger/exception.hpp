@@ -14,7 +14,7 @@ class result_exception : public std::exception {
 public:
   result_exception(result_t code) noexcept;
 
-  const char* what() const noexcept;
+  const char* what() const noexcept override;
 
   constexpr result_t code() const noexcept { return code_; }
 
