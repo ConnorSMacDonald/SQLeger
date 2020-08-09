@@ -60,6 +60,7 @@ constexpr auto db::take_c_ptr() noexcept -> c_type*
   // TODO: in C++20, use constexpr exchange
   auto* const result = c_ptr_;
   c_ptr_ = nullptr;
+
   return result;
 }
 
