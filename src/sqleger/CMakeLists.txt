@@ -55,6 +55,10 @@ if (${SQLEGER_BUILD_TESTS})
   target_link_libraries(db.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME db.test COMMAND db.test)
 
+  add_executable(exception.test exception.test.cpp)
+  target_link_libraries(exception.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME exception.test COMMAND exception.test)
+
   add_executable(string.test string.test.cpp)
   target_link_libraries(string.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME string.test COMMAND string.test)
