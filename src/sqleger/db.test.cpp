@@ -20,6 +20,7 @@ TEST_CASE("A db can be opened and closed", "[db]")
     const auto r2 = d.close();
 
     REQUIRE(r2 == result_t::ok);
+    REQUIRE(d.c_ptr() == nullptr);
   }
 
   SECTION("open v1, close v2")
@@ -33,6 +34,7 @@ TEST_CASE("A db can be opened and closed", "[db]")
     const auto r2 = d.close_v2();
 
     REQUIRE(r2 == result_t::ok);
+    REQUIRE(d.c_ptr() == nullptr);
   }
 
   SECTION("open v2, close v1")
@@ -47,6 +49,7 @@ TEST_CASE("A db can be opened and closed", "[db]")
     const auto r2 = d.close();
 
     REQUIRE(r2 == result_t::ok);
+    REQUIRE(d.c_ptr() == nullptr);
   }
 }
 

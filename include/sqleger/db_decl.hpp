@@ -2,6 +2,7 @@
 #define SQLEGER_DB_DECL_HPP
 
 #include <sqleger/constants.hpp>
+#include <sqleger/exception.hpp>
 #include <sqleger/string.hpp>
 
 #include <sqlite3.h>

@@ -44,12 +44,17 @@ db::~db() noexcept
 
 result_t db::close() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_close(c_ptr_));
+  const auto r = int_to_enum<result_t>(::sqlite3_close(c_ptr_));
+
+  if (r == result_t::ok)
+    c_ptr_ = nullptr;
+
+  return r;
 }
 
 result_t db::close_v2() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
+  return int_to_enum<result_t>(::sqlite3_close_v2(take_c_ptr()));
 }
 
 constexpr auto db::take_c_ptr() noexcept -> c_type*
