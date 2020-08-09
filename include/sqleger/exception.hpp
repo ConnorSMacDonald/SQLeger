@@ -27,6 +27,22 @@ private:
 };
 
 
+class open_exception : public result_exception {
+
+public:
+  inline open_exception(result_t code, const zstring_view& message) noexcept;
+
+  open_exception(const open_exception& other) noexcept = default;
+
+  open_exception(open_exception&& other) noexcept = default;
+
+  inline const char* what() const noexcept override;
+
+private:
+  const zstring_view message_;
+};
+
+
 // =============================================================================
 
 
@@ -37,6 +53,18 @@ result_exception::result_exception(const result_t code) noexcept : code_ {code}
 const char* result_exception::what() const noexcept
 {
   return errstr(code_);
+}
+
+open_exception::open_exception(const result_t code,
+                               const zstring_view& message) noexcept :
+  result_exception {code},
+  message_ {message}
+{
+}
+
+const char* open_exception::what() const noexcept
+{
+  return message_;
 }
 
 
