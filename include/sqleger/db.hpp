@@ -9,6 +9,18 @@
 namespace sqleger {
 
 
+template <typename Impl>
+zstring_view db_interface<Impl>::errmsg() const noexcept
+{
+  return ::sqlite3_errmsg(c_ptr());
+}
+
+template <typename Impl>
+auto db_interface<Impl>::c_ptr() const noexcept -> c_type*
+{
+  return static_cast<const impl_type*>(this)->c_ptr();
+}
+
 result_t db::open(const zstring_view& filename, db& result) noexcept
 {
   return int_to_enum<result_t>(

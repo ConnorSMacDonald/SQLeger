@@ -2,7 +2,6 @@
 #define SQLEGER_DB_DECL_HPP
 
 #include <sqleger/constants.hpp>
-#include <sqleger/exception.hpp>
 #include <sqleger/string.hpp>
 
 #include <sqlite3.h>
@@ -21,8 +20,10 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3;
 
+  zstring_view errmsg() const noexcept;
+
 private:
-  c_type* c_ptr() noexcept;
+  c_type* c_ptr() const noexcept;
 };
 
 

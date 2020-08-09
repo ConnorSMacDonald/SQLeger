@@ -144,3 +144,16 @@ TEST_CASE("A db can be moved", "[db]")
     REQUIRE(d1.c_ptr() == nullptr);
   }
 }
+
+TEST_CASE("An error message can be retrieved from a db interface", "[db]")
+{
+  db d;
+  const auto r1
+    = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open_t::readonly);
+
+  REQUIRE(r1 != result_t::ok);
+
+  const auto zv = d.errmsg();
+
+  REQUIRE(zv.c_str() == ::sqlite3_errmsg(d.c_ptr()));
+}
