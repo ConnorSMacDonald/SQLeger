@@ -19,6 +19,7 @@ enum class result_t {
   internal = SQLITE_INTERNAL,
   perm = SQLITE_PERM,
   abort = SQLITE_ABORT,
+  busy = SQLITE_BUSY,
   locked = SQLITE_LOCKED,
   nomem = SQLITE_NOMEM,
   readonly = SQLITE_READONLY,
