@@ -1,6 +1,8 @@
 #ifndef SQLEGER_CONSTANTS_HPP
 #define SQLEGER_CONSTANTS_HPP
 
+#include <sqleger/string.hpp>
+
 #include <sqlite3.h>
 
 #include <algorithm>
@@ -11,7 +13,7 @@ namespace sqleger {
 
 
 enum class result_t {
-  // Primary result_code codes
+  // Primary result codes
   ok = SQLITE_OK,
   error = SQLITE_ERROR,
   internal = SQLITE_INTERNAL,
@@ -40,7 +42,7 @@ enum class result_t {
   warning = SQLITE_WARNING,
   row = SQLITE_ROW,
   done = SQLITE_DONE,
-  // Extended result_code codes
+  // Extended result codes
   ok_load_permanently = SQLITE_OK_LOAD_PERMANENTLY,
   error_missing_collseq = SQLITE_ERROR_MISSING_COLLSEQ,
   error_retry = SQLITE_ERROR_RETRY,
@@ -138,6 +140,8 @@ constexpr Enum int_to_enum(std::underlying_type_t<Enum> value) noexcept;
 template <typename Enum>
 constexpr Enum flags(std::initializer_list<Enum> values = {}) noexcept;
 
+inline zstring_view errstr(result_t code) noexcept;
+
 
 // =============================================================================
 
@@ -168,6 +172,11 @@ constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
                                | static_cast<int_type>(e));
 
   return result;
+}
+
+inline zstring_view errstr(const result_t code) noexcept
+{
+  return ::sqlite3_errstr(enum_to_int(code));
 }
 
 
