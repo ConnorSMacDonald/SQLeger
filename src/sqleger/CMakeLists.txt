@@ -47,6 +47,10 @@ if (${SQLEGER_BUILD_TESTS})
 
   include(CTest)
 
+  add_executable(constants.test constants.test.cpp)
+  target_link_libraries(constants.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME constants.test COMMAND constants.test)
+
   add_executable(string.test string.test.cpp)
   target_link_libraries(string.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME string.test COMMAND string.test)
