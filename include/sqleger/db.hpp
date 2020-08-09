@@ -12,18 +12,15 @@ namespace sqleger {
 result_t db::open(const zstring_view& filename, db& result) noexcept
 {
   return int_to_enum<result_t>(
-    ::sqlite3_open(filename.c_str(), reinterpret_cast<::sqlite3**>(&result)));
+    ::sqlite3_open(filename.c_str(), &result.c_ptr_));
 }
 
 result_t db::open_v2(const zstring_view& filename,
                      db& result,
                      const open_t flags) noexcept
 {
-  return int_to_enum<result_t>(
-    ::sqlite3_open_v2(filename.c_str(),
-                      reinterpret_cast<::sqlite3**>(&result),
-                      enum_to_int(flags),
-                      nullptr));
+  return int_to_enum<result_t>(::sqlite3_open_v2(
+    filename.c_str(), &result.c_ptr_, enum_to_int(flags), nullptr));
 }
 
 constexpr db::db(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
