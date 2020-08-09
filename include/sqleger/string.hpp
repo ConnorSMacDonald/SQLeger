@@ -45,13 +45,6 @@ private:
   const char_type* c_str_;
 };
 
-template <typename Char>
-const Char** to_c_str_ptr(basic_zstring_view<Char>* view) noexcept;
-
-template <typename Char>
-const Char** to_c_str_ptr(basic_zstring_view<Char>& view) noexcept;
-
-
 using zstring_view = basic_zstring_view<char>;
 
 

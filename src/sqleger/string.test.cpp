@@ -54,21 +54,6 @@ TEST_CASE("A zstring view can be converted to a standard string view",
   REQUIRE(stdsv.data() == zv.c_str());
 }
 
-TEST_CASE("A zstring view reference or pointer can converted to a pointer to a "
-          "C-style string",
-          "[string]")
-{
-  auto zv = zstring_view("Pointer inconvertibility is cool");
-
-  const auto** const cs1 = to_c_str_ptr(zv);
-
-  REQUIRE(*cs1 == zv.c_str());
-
-  const auto** const cs2 = to_c_str_ptr(&zv);
-
-  REQUIRE(*cs2 == zv.c_str());
-}
-
 TEST_CASE("A string span can be constructed from a C-style", "[string]")
 {
   constexpr auto* const cs = "foo bar baz something something";
