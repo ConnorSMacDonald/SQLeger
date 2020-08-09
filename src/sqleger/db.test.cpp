@@ -51,6 +51,50 @@ TEST_CASE("A db can be opened and closed", "[db]")
     REQUIRE(r2 == result_t::ok);
     REQUIRE(d.c_ptr() == nullptr);
   }
+
+  SECTION("open v2 failure, close v1")
+  {
+    db d;
+    const auto r1
+      = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open_t::readonly);
+
+    REQUIRE(r1 != result_t::ok);
+    REQUIRE(d.c_ptr() != nullptr);
+
+    const auto r2 = d.close();
+
+    REQUIRE(r2 == result_t::ok);
+    REQUIRE(d.c_ptr() == nullptr);
+  }
+
+  SECTION("open v1, close v1 failure")
+  {
+    db d;
+    const auto r1 = db::open(":memory:", d);
+
+    REQUIRE(r1 == result_t::ok);
+    REQUIRE(d.c_ptr() != nullptr);
+
+    ::sqlite3_stmt* s = nullptr;
+    const auto r2 = int_to_enum<result_t>(::sqlite3_prepare_v2(
+      d.c_ptr(), "CREATE TABLE t(x INTEGER)", -1, &s, nullptr));
+
+    REQUIRE(r2 == result_t::ok);
+
+    const auto r3 = d.close();
+
+    REQUIRE(r3 == result_t::busy);
+    REQUIRE(d.c_ptr() != nullptr);
+
+    const auto r4 = int_to_enum<result_t>(::sqlite3_finalize(s));
+
+    REQUIRE(r4 == result_t::ok);
+
+    const auto r5 = d.close();
+
+    REQUIRE(r5 == result_t::ok);
+    REQUIRE(d.c_ptr() == nullptr);
+  }
 }
 
 TEST_CASE("A C handle can be taken from a db", "[db]")
