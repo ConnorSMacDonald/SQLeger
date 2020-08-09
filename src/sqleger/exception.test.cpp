@@ -23,8 +23,7 @@ TEST_CASE("A result exception can be thrown and caught", "[exception]")
 TEST_CASE("An open exception can be thrown and caught", "[exception]")
 {
   db d;
-  const auto r
-    = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open_t::readonly);
+  const auto r = db::open("/", d);
 
   REQUIRE(r != result_t::ok);
 
