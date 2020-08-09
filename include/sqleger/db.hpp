@@ -2,6 +2,7 @@
 #define SQLEGER_DB_HPP
 
 #include <sqleger/db_decl.hpp>
+#include <sqleger/exception.hpp>
 
 #include <utility>
 
@@ -33,6 +34,22 @@ result_t db::open_v2(const zstring_view& filename,
 {
   return int_to_enum<result_t>(::sqlite3_open_v2(
     filename.c_str(), &result.c_ptr_, enum_to_int(flags), nullptr));
+}
+
+db::db(const zstring_view& filename)
+{
+  const auto r = open(filename, *this);
+
+  if (is_error(r))
+    throw open_exception(r, std::move(*this));
+}
+
+db::db(const zstring_view& filename, const open_t flags)
+{
+  const auto r = open_v2(filename, *this, flags);
+
+  if (is_error(r))
+    throw open_exception(r, std::move(*this));
 }
 
 constexpr db::db(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}

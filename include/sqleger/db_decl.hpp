@@ -40,6 +40,10 @@ public:
 
   constexpr db() noexcept = default;
 
+  inline db(const zstring_view& filename);
+
+  inline db(const zstring_view& filename, open_t flags);
+
   constexpr db(c_type* c_ptr) noexcept;
 
   constexpr db(db&& other) noexcept;

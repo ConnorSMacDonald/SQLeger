@@ -6,6 +6,8 @@
 
 using namespace sqleger;
 
+using namespace std::string_view_literals;
+
 
 TEST_CASE("A db can be opened and closed", "[db]")
 {
@@ -155,4 +157,48 @@ TEST_CASE("An error message can be retrieved from a db interface", "[db]")
   const auto zv = d.errmsg();
 
   REQUIRE(zv.c_str() == ::sqlite3_errmsg(d.c_ptr()));
+}
+
+TEST_CASE("A db can be opened through a constructor-exception interface",
+          "[db]")
+{
+  SECTION("open v1")
+  {
+    auto d = db(":memory:");
+
+    REQUIRE(d.c_ptr() != nullptr);
+  }
+
+  SECTION("open v2")
+  {
+    auto d = db(":memory:", flags({open_t::readonly, open_t::nomutex}));
+
+    REQUIRE(d.c_ptr() != nullptr);
+  }
+
+  SECTION("open v1 with throw")
+  {
+    try
+    {
+      auto d = db("/");
+    }
+    catch (const open_exception& e)
+    {
+      REQUIRE(e.code() == result_t::cantopen);
+      REQUIRE(e.what() == "unable to open database file"sv);
+    }
+  }
+
+  SECTION("open v2 with throw")
+  {
+    try
+    {
+      auto d = db("/", open_t::readwrite);
+    }
+    catch (const open_exception& e)
+    {
+      REQUIRE(e.code() == result_t::cantopen);
+      REQUIRE(e.what() == "unable to open database file"sv);
+    }
+  }
 }
