@@ -12,14 +12,18 @@ namespace sqleger {
 class result_exception : public std::exception {
 
 public:
-  result_exception(result_t code) noexcept;
+  inline result_exception(result_t code) noexcept;
 
-  const char* what() const noexcept override;
+  result_exception(const result_exception& other) noexcept = default;
+
+  result_exception(result_exception&& other) noexcept = default;
+
+  inline const char* what() const noexcept override;
 
   constexpr result_t code() const noexcept { return code_; }
 
 private:
-  result_t code_;
+  const result_t code_;
 };
 
 
