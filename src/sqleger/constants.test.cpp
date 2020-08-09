@@ -30,3 +30,33 @@ TEST_CASE("A error string for a result code can be retrieved", "[constants]")
 
   REQUIRE(zv.c_str() == cs);
 }
+
+TEST_CASE("The primary result code of an extended result code can be retrieved",
+          "[constants]")
+{
+  REQUIRE(primary_result(result_t::ok) == result_t::ok);
+  REQUIRE(primary_result(result_t::ok_load_permanently) == result_t::ok);
+  REQUIRE(primary_result(result_t::error_retry) == result_t::error);
+}
+
+TEST_CASE("A result code can be queried to see if it is an error code",
+          "[constants]")
+{
+  REQUIRE_FALSE(is_error(result_t::ok));
+  REQUIRE(is_non_error(result_t::ok));
+
+  REQUIRE_FALSE(is_error(result_t::row));
+  REQUIRE(is_non_error(result_t::row));
+
+  REQUIRE_FALSE(is_error(result_t::done));
+  REQUIRE(is_non_error(result_t::done));
+
+  REQUIRE_FALSE(is_error(result_t::ok_load_permanently));
+  REQUIRE(is_non_error(result_t::ok_load_permanently));
+
+  REQUIRE(is_error(result_t::error));
+  REQUIRE_FALSE(is_non_error(result_t::error));
+
+  REQUIRE(is_error(result_t::ioerr_read));
+  REQUIRE_FALSE(is_non_error(result_t::ioerr_read));
+}

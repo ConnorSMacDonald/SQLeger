@@ -142,6 +142,12 @@ constexpr Enum flags(std::initializer_list<Enum> values = {}) noexcept;
 
 inline zstring_view errstr(result_t code) noexcept;
 
+constexpr result_t primary_result(result_t code) noexcept;
+
+constexpr bool is_error(result_t code) noexcept;
+
+constexpr bool is_non_error(result_t code) noexcept;
+
 
 // =============================================================================
 
@@ -177,6 +183,24 @@ constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
 inline zstring_view errstr(const result_t code) noexcept
 {
   return ::sqlite3_errstr(enum_to_int(code));
+}
+
+constexpr result_t primary_result(const result_t code) noexcept
+{
+  return static_cast<result_t>(static_cast<unsigned int>(code) & 0xFF);
+}
+
+constexpr bool is_error(const result_t code) noexcept
+{
+  const auto primary = primary_result(code);
+
+  return !(primary == result_t::ok || primary == result_t::row
+           || primary == result_t::done);
+}
+
+constexpr bool is_non_error(const result_t code) noexcept
+{
+  return !is_error(code);
 }
 
 
