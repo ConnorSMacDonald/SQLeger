@@ -48,7 +48,7 @@ public:
 
   constexpr db(db&& other) noexcept;
 
-  constexpr db& operator=(db&& other) noexcept;
+  inline db& operator=(db&& other) noexcept;
 
   inline ~db() noexcept;
 
@@ -61,6 +61,8 @@ public:
   c_type* c_ptr() const noexcept { return c_ptr_; }
 
 private:
+  inline result_t do_close_v2() noexcept;
+
   c_type* c_ptr_ = nullptr;
 };
 

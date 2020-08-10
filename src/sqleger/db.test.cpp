@@ -130,7 +130,7 @@ TEST_CASE("A db can be moved", "[db]")
     REQUIRE(d1.c_ptr() == nullptr);
   }
 
-  SECTION("assignment")
+  SECTION("assignment into null")
   {
     db d1;
     const auto r = db::open(":memory:", d1);
@@ -140,6 +140,26 @@ TEST_CASE("A db can be moved", "[db]")
     const auto* const p = d1.c_ptr();
 
     db d2;
+    d2 = std::move(d1);
+
+    REQUIRE(d2.c_ptr() == p);
+    REQUIRE(d1.c_ptr() == nullptr);
+  }
+
+  SECTION("assignment into open db")
+  {
+    db d1;
+    const auto r1 = db::open(":memory:", d1);
+
+    REQUIRE(r1 == result_t::ok);
+
+    const auto* const p = d1.c_ptr();
+
+    db d2;
+    const auto r2 = db::open(":memory:", d2);
+
+    REQUIRE(r2 == result_t::ok);
+
     d2 = std::move(d1);
 
     REQUIRE(d2.c_ptr() == p);

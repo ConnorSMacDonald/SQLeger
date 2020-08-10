@@ -56,10 +56,12 @@ constexpr db::db(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
 
 constexpr db::db(db&& other) noexcept : db {other.take_c_ptr()} {}
 
-constexpr db& db::operator=(db&& other) noexcept
+db& db::operator=(db&& other) noexcept
 {
   if (this == &other)
     return *this;
+
+  do_close_v2();
 
   c_ptr_ = other.take_c_ptr();
 
@@ -68,7 +70,7 @@ constexpr db& db::operator=(db&& other) noexcept
 
 db::~db() noexcept
 {
-  close_v2();
+  do_close_v2();
 }
 
 result_t db::close() noexcept
@@ -83,16 +85,25 @@ result_t db::close() noexcept
 
 result_t db::close_v2() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_close_v2(take_c_ptr()));
+  const auto r = do_close_v2();
+
+  c_ptr_ = nullptr;
+
+  return r;
 }
 
 constexpr auto db::take_c_ptr() noexcept -> c_type*
 {
-  // TODO: in C++20, use constexpr exchange
   auto* const result = c_ptr_;
+
   c_ptr_ = nullptr;
 
   return result;
+}
+
+result_t db::do_close_v2() noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
 }
 
 
