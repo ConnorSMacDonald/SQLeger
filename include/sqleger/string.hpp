@@ -148,18 +148,6 @@ operator std::basic_string_view<char_type, Traits>() const noexcept
 }
 
 template <typename Char>
-const Char** to_c_str_ptr(basic_zstring_view<Char>* const view) noexcept
-{
-  return reinterpret_cast<const Char**>(view);
-}
-
-template <typename Char>
-const Char** to_c_str_ptr(basic_zstring_view<Char>& view) noexcept
-{
-  return to_c_str_ptr(&view);
-}
-
-template <typename Char>
 constexpr basic_string_span<Char>::basic_string_span(
   const char_type* const data,
   const size_type size) noexcept :
