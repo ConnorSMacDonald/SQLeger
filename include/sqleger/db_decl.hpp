@@ -2,6 +2,7 @@
 #define SQLEGER_DB_DECL_HPP
 
 #include <sqleger/constants.hpp>
+#include <sqleger/result_exception.hpp>
 #include <sqleger/string.hpp>
 
 #include <sqlite3.h>
@@ -66,6 +67,20 @@ private:
   inline result_t do_close_v2() noexcept;
 
   c_type* c_ptr_ = nullptr;
+};
+
+
+class open_exception : public result_exception {
+
+public:
+  inline open_exception(result_t code, db&& connection) noexcept;
+
+  open_exception(open_exception&& other) noexcept = default;
+
+  inline const char* what() const noexcept override;
+
+private:
+  db db_;
 };
 
 

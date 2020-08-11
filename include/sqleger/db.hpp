@@ -2,7 +2,6 @@
 #define SQLEGER_DB_HPP
 
 #include <sqleger/db_decl.hpp>
-#include <sqleger/exception.hpp>
 #include <sqleger/stmt.hpp>
 
 #include <utility>
@@ -109,6 +108,17 @@ constexpr auto db::take_c_ptr() noexcept -> c_type*
 result_t db::do_close_v2() noexcept
 {
   return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
+}
+
+open_exception::open_exception(const result_t code, db&& connection) noexcept :
+  result_exception {code},
+  db_ {std::move(connection)}
+{
+}
+
+const char* open_exception::what() const noexcept
+{
+  return db_.errmsg();
 }
 
 

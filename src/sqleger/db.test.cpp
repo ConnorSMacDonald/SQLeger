@@ -180,6 +180,26 @@ TEST_CASE("An error message can be retrieved from a db interface", "[db]")
   REQUIRE(zv.c_str() == ::sqlite3_errmsg(d.c_ptr()));
 }
 
+TEST_CASE("An open exception can be thrown and caught", "[db]")
+{
+  db d;
+  const auto r = db::open("/", d);
+
+  REQUIRE(r != result_t::ok);
+
+  const auto msg = static_cast<std::string>(d.errmsg());
+
+  try
+  {
+    throw open_exception(r, std::move(d));
+  }
+  catch (const open_exception& e)
+  {
+    REQUIRE(e.code() == r);
+    REQUIRE(e.what() == msg);
+  }
+}
+
 TEST_CASE("A db can be opened through a constructor-exception interface",
           "[db]")
 {

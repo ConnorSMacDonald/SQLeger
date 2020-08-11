@@ -2,7 +2,7 @@
 #define SQLEGER_STMT_HPP
 
 #include <sqleger/db_decl.hpp>
-#include <sqleger/exception.hpp>
+#include <sqleger/result_exception.hpp>
 
 #include <sqlite3.h>
 
