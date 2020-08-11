@@ -47,17 +47,13 @@ result_t db::open_v2(const zstring_view& filename,
 
 db::db(const zstring_view& filename)
 {
-  const auto r = open(filename, *this);
-
-  if (is_error(r))
+  if (const auto r = open(filename, *this); is_error(r))
     throw open_exception(r, std::move(*this));
 }
 
 db::db(const zstring_view& filename, const open_t flags)
 {
-  const auto r = open_v2(filename, *this, flags);
-
-  if (is_error(r))
+  if (const auto r = open_v2(filename, *this, flags); is_error(r))
     throw open_exception(r, std::move(*this));
 }
 
