@@ -85,7 +85,7 @@ TEST_CASE("A stmt can be prepared through a constructor-exception interface",
 
     const auto q1 = "CREATE TABLE t(x INTEGER)garbage"s;
     const auto q2 = std::string_view(q1.c_str(), 25);
- 
+
     auto s = stmt(d, q2);
 
     REQUIRE(s.c_ptr() != nullptr);
