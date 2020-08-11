@@ -100,74 +100,6 @@ TEST_CASE("A db can be opened and closed", "[db]")
   }
 }
 
-TEST_CASE("A C handle can be taken from a db", "[db]")
-{
-  db d1;
-  const auto r = db::open(":memory:", d1);
-
-  REQUIRE(r == result_t::ok);
-
-  const auto* const p1 = d1.c_ptr();
-  const auto* const p2 = d1.take_c_ptr();
-
-  REQUIRE(p1 == p2);
-  REQUIRE(d1.c_ptr() == nullptr);
-}
-
-TEST_CASE("A db can be moved", "[db]")
-{
-  SECTION("construction")
-  {
-    db d1;
-    const auto r = db::open(":memory:", d1);
-
-    REQUIRE(r == result_t::ok);
-
-    const auto* const p = d1.c_ptr();
-
-    auto d2 = db(std::move(d1));
-
-    REQUIRE(d2.c_ptr() == p);
-    REQUIRE(d1.c_ptr() == nullptr);
-  }
-
-  SECTION("assignment into null")
-  {
-    db d1;
-    const auto r = db::open(":memory:", d1);
-
-    REQUIRE(r == result_t::ok);
-
-    const auto* const p = d1.c_ptr();
-
-    db d2;
-    d2 = std::move(d1);
-
-    REQUIRE(d2.c_ptr() == p);
-    REQUIRE(d1.c_ptr() == nullptr);
-  }
-
-  SECTION("assignment into open db")
-  {
-    db d1;
-    const auto r1 = db::open(":memory:", d1);
-
-    REQUIRE(r1 == result_t::ok);
-
-    const auto* const p = d1.c_ptr();
-
-    db d2;
-    const auto r2 = db::open(":memory:", d2);
-
-    REQUIRE(r2 == result_t::ok);
-
-    d2 = std::move(d1);
-
-    REQUIRE(d2.c_ptr() == p);
-    REQUIRE(d1.c_ptr() == nullptr);
-  }
-}
-
 TEST_CASE("An error message can be retrieved from a db interface", "[db]")
 {
   db d;
@@ -241,5 +173,57 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
       REQUIRE(e.code() == result_t::cantopen);
       REQUIRE(e.what() == "unable to open database file"sv);
     }
+  }
+}
+
+TEST_CASE("A C handle can be taken from a db", "[db]")
+{
+  auto d = db(":memory:");
+
+  const auto* const p1 = d.c_ptr();
+  const auto* const p2 = d.take_c_ptr();
+
+  REQUIRE(p1 == p2);
+  REQUIRE(d.c_ptr() == nullptr);
+}
+
+TEST_CASE("A db can be moved", "[db]")
+{
+  SECTION("construction")
+  {
+    auto d1 = db(":memory:");
+
+    const auto* const p = d1.c_ptr();
+
+    auto d2 = db(std::move(d1));
+
+    REQUIRE(d2.c_ptr() == p);
+    REQUIRE(d1.c_ptr() == nullptr);
+  }
+
+  SECTION("assignment into null")
+  {
+    auto d1 = db(":memory:");
+
+    const auto* const p = d1.c_ptr();
+
+    db d2;
+    d2 = std::move(d1);
+
+    REQUIRE(d2.c_ptr() == p);
+    REQUIRE(d1.c_ptr() == nullptr);
+  }
+
+  SECTION("assignment into open db")
+  {
+    auto d1 = db(":memory:");
+
+    const auto* const p = d1.c_ptr();
+
+    auto d2 = db(":memory:");
+    d2 = std::move(d1);
+
+    REQUIRE(d2.c_ptr() == p);
+    REQUIRE(d1.c_ptr() == nullptr);
   }
 }
