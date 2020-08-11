@@ -20,6 +20,8 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3;
 
+  result_t prepare_v2(const string_span& sql, stmt& result) noexcept;
+
   zstring_view errmsg() const noexcept;
 
 private:

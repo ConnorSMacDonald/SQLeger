@@ -3,12 +3,21 @@
 
 #include <sqleger/db_decl.hpp>
 #include <sqleger/exception.hpp>
+#include <sqleger/stmt.hpp>
 
 #include <utility>
 
 
 namespace sqleger {
 
+
+template <typename Impl>
+result_t db_interface<Impl>::prepare_v2(const string_span& sql,
+                                        stmt& result) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_prepare_v2(
+    c_ptr(), sql.data(), sql.size(), result.c_ptr_out(), nullptr));
+}
 
 template <typename Impl>
 zstring_view db_interface<Impl>::errmsg() const noexcept

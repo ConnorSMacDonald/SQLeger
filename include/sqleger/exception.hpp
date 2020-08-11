@@ -69,7 +69,4 @@ const char* open_exception::what() const noexcept
 }; // namespace sqleger
 
 
-#include <sqleger/db.hpp>
-
-
 #endif
