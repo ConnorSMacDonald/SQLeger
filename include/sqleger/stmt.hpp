@@ -19,6 +19,10 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_stmt;
 
+  result_t step() noexcept;
+
+  result_t reset() noexcept;
+
   zstring_view sql() const noexcept;
 
 private:
@@ -61,6 +65,18 @@ private:
 
 // =============================================================================
 
+
+template <typename Impl>
+result_t stmt_interface<Impl>::step() noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_step(c_ptr()));
+}
+
+template <typename Impl>
+result_t stmt_interface<Impl>::reset() noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_reset(c_ptr()));
+}
 
 template <typename Impl>
 zstring_view stmt_interface<Impl>::sql() const noexcept

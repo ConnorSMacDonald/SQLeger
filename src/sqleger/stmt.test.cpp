@@ -162,3 +162,35 @@ TEST_CASE("A stmt can be moved", "[stmt]")
     REQUIRE(s1.c_ptr() == nullptr);
   }
 }
+
+TEST_CASE("A stmt can be stepped", "[stmt]")
+{
+  auto d = db(":memory:");
+  auto s = stmt(d, "CREATE TABLE t(x INTEGER)"sv);
+
+  const auto r1 = s.step();
+
+  REQUIRE(r1 == result_t::done);
+
+  const auto r2 = s.step();
+
+  REQUIRE(is_error(r2));
+}
+
+TEST_CASE("A stmt can be reset", "[stmt]")
+{
+  auto d = db(":memory:");
+  auto s = stmt(d, "CREATE TABLE IF NOT EXISTS t(x INTEGER)"sv);
+
+  const auto r1 = s.step();
+
+  REQUIRE(r1 == result_t::done);
+
+  const auto r2 = s.reset();
+
+  REQUIRE(r2 == result_t::ok);
+
+  const auto r3 = s.step();
+
+  REQUIRE(r3 == result_t::done);
+}
