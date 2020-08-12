@@ -2,7 +2,9 @@
 #define SQLEGER_STMT_HPP
 
 #include <sqleger/db_decl.hpp>
+#include <sqleger/int.hpp>
 #include <sqleger/result_exception.hpp>
+#include <sqleger/utility.hpp>
 
 #include <sqlite3.h>
 
@@ -111,10 +113,7 @@ result_t stmt::finalize() noexcept
 
 constexpr auto stmt::take_c_ptr() noexcept -> c_type*
 {
-  auto* const result = c_ptr_;
-  c_ptr_ = nullptr;
-
-  return result;
+  return exchange_nullptr(c_ptr_);
 }
 
 result_t stmt::do_finalize() noexcept

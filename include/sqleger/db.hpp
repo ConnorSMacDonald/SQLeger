@@ -3,6 +3,7 @@
 
 #include <sqleger/db_decl.hpp>
 #include <sqleger/stmt.hpp>
+#include <sqleger/utility.hpp>
 
 #include <utility>
 
@@ -98,11 +99,7 @@ result_t db::close_v2() noexcept
 
 constexpr auto db::take_c_ptr() noexcept -> c_type*
 {
-  auto* const result = c_ptr_;
-
-  c_ptr_ = nullptr;
-
-  return result;
+  return exchange_nullptr(c_ptr_);
 }
 
 result_t db::do_close_v2() noexcept
