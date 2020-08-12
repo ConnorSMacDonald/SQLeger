@@ -38,7 +38,7 @@ public:
 
   constexpr stmt(stmt&& other) noexcept;
 
-  constexpr stmt& operator=(stmt&& other) noexcept;
+  stmt& operator=(stmt&& other) noexcept;
 
   inline ~stmt() noexcept;
 
@@ -83,7 +83,7 @@ constexpr stmt::stmt(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
 
 constexpr stmt::stmt(stmt&& other) noexcept : c_ptr_ {other.take_c_ptr()} {}
 
-constexpr stmt& stmt::operator=(stmt&& other) noexcept
+stmt& stmt::operator=(stmt&& other) noexcept
 {
   if (this == &other)
     return *this;
