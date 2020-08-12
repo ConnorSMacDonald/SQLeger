@@ -19,6 +19,14 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_stmt;
 
+  result_t bind_double(int index, double value) noexcept;
+
+  result_t bind_int(int index, int value) noexcept;
+
+  result_t bind_int64(int index, int64 value) noexcept;
+
+  result_t bind_null(int index) noexcept;
+
   result_t step() noexcept;
 
   result_t reset() noexcept;
@@ -65,6 +73,33 @@ private:
 
 // =============================================================================
 
+
+template <typename Impl>
+result_t stmt_interface<Impl>::bind_double(const int index,
+                                           const double value) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_double(c_ptr(), index, value));
+}
+
+template <typename Impl>
+result_t stmt_interface<Impl>::bind_int(const int index,
+                                        const int value) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_int(c_ptr(), index, value));
+}
+
+template <typename Impl>
+result_t stmt_interface<Impl>::bind_int64(const int index,
+                                          const int64 value) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_int64(c_ptr(), index, value));
+}
+
+template <typename Impl>
+result_t stmt_interface<Impl>::bind_null(const int index) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_null(c_ptr(), index));
+}
 
 template <typename Impl>
 result_t stmt_interface<Impl>::step() noexcept
