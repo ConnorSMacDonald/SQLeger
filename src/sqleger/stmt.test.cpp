@@ -204,29 +204,27 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
     "CREATE TABLE t("
     "a REAL NOT NULL, b INTEGER NOT NULL, c INTEGER NOT NULL, d INTEGER)"sv);
 
-  const auto r1 = s1.step();
-
-  REQUIRE(r1 == result_t::done);
+  REQUIRE(s1.step() == result_t::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4)");
 
-  const auto r2 = s2.bind_double(1, 0.25);
+  const auto r1 = s2.bind_double(1, 0.25);
+
+  REQUIRE(r1 == result_t::ok);
+
+  const auto r2 = s2.bind_int(2, 2);
 
   REQUIRE(r2 == result_t::ok);
 
-  const auto r3 = s2.bind_int(2, 2);
+  const auto r3 = s2.bind_int64(3, 3);
 
   REQUIRE(r3 == result_t::ok);
 
-  const auto r4 = s2.bind_int64(3, 3);
+  const auto r4 = s2.bind_null(4);
 
   REQUIRE(r4 == result_t::ok);
 
-  const auto r5 = s2.bind_null(4);
+  const auto r5 = s2.step();
 
-  REQUIRE(r5 == result_t::ok);
-
-  const auto r6 = s2.step();
-
-  REQUIRE(r6 == result_t::done);
+  REQUIRE(r5 == result_t::done);
 }
