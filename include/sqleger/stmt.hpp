@@ -27,6 +27,14 @@ public:
 
   result_t bind_null(int index) noexcept;
 
+  double column_double(int index) noexcept;
+
+  int column_int(int index) noexcept;
+
+  int64 column_int64(int index) noexcept;
+
+  datatype_t column_type(int index) noexcept;
+
   result_t step() noexcept;
 
   result_t reset() noexcept;
@@ -99,6 +107,30 @@ template <typename Impl>
 result_t stmt_interface<Impl>::bind_null(const int index) noexcept
 {
   return int_to_enum<result_t>(::sqlite3_bind_null(c_ptr(), index));
+}
+
+template <typename Impl>
+double stmt_interface<Impl>::column_double(const int index) noexcept
+{
+  return ::sqlite3_column_double(c_ptr(), index);
+}
+
+template <typename Impl>
+int stmt_interface<Impl>::column_int(const int index) noexcept
+{
+  return ::sqlite3_column_int(c_ptr(), index);
+}
+
+template <typename Impl>
+int64 stmt_interface<Impl>::column_int64(const int index) noexcept
+{
+  return ::sqlite3_column_int64(c_ptr(), index);
+}
+
+template <typename Impl>
+datatype_t stmt_interface<Impl>::column_type(const int index) noexcept
+{
+  return int_to_enum<datatype_t>(::sqlite3_column_type(c_ptr(), index));
 }
 
 template <typename Impl>

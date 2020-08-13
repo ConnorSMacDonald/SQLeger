@@ -228,3 +228,52 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
 
   REQUIRE(r5 == result_t::done);
 }
+
+TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(
+    d,
+    "CREATE TABLE t("
+    "a REAL NOT NULL, b INTEGER NOT NULL, c INTEGER NOT NULL, d INTEGER)"sv);
+
+  REQUIRE(s1.step() == result_t::done);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4)");
+
+  REQUIRE(s2.bind_double(1, 0.25) == result_t::ok);
+  REQUIRE(s2.bind_int(2, 2) == result_t::ok);
+  REQUIRE(s2.bind_int64(3, 3) == result_t::ok);
+  REQUIRE(s2.bind_null(4) == result_t::ok);
+  REQUIRE(s2.step() == result_t::done);
+
+  auto s3 = stmt(d, "SELECT a, b, c, d FROM t");
+
+  const auto r1 = s3.step();
+  REQUIRE(r1 == result_t::row);
+
+  const auto dt1 = s3.column_type(0);
+  REQUIRE(dt1 == datatype_t::_float);
+
+  const auto dt2 = s3.column_type(1);
+  REQUIRE(dt2 == datatype_t::integer);
+
+  const auto dt3 = s3.column_type(2);
+  REQUIRE(dt3 == datatype_t::integer);
+
+  const auto dt4 = s3.column_type(3);
+  REQUIRE(dt4 == datatype_t::null);
+
+  const auto a = s3.column_double(0);
+  REQUIRE(a == 0.25);
+
+  const auto b = s3.column_int(1);
+  REQUIRE(b == 2);
+
+  const auto c = s3.column_int64(2);
+  REQUIRE(c == 3);
+
+  const auto r2 = s3.step();
+  REQUIRE(r2 == result_t::done);
+}

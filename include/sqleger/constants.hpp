@@ -131,6 +131,14 @@ enum class open_t {
   nofollow = SQLITE_OPEN_NOFOLLOW,
 };
 
+enum class datatype_t {
+  integer = SQLITE_INTEGER,
+  _float = SQLITE_FLOAT,
+  text = SQLITE3_TEXT,
+  blob = SQLITE_BLOB,
+  null = SQLITE_NULL
+};
+
 
 template <typename Enum>
 constexpr std::underlying_type_t<Enum> enum_to_int(Enum value) noexcept;
