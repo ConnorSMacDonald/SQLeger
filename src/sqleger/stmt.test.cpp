@@ -228,7 +228,7 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
   const auto r5 = s2.bind_null(5);
   REQUIRE(r5 == result_t::ok);
 
-  const auto r6 = s2.bind_text(6, "aal;sdfkjjk aAAV NFLS4E352");
+  const auto r6 = s2.bind_text(6, {"aal;sdfkjjk aAAV NFLS4E352"});
   REQUIRE(r6 == result_t::ok);
 
   const auto r7 = s2.step();
@@ -260,7 +260,7 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
   REQUIRE(s2.bind_int(3, 2) == result_t::ok);
   REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
   REQUIRE(s2.bind_null(5) == result_t::ok);
-  REQUIRE(s2.bind_text(6, ssv) == result_t::ok);
+  REQUIRE(s2.bind_text(6, {ssv}) == result_t::ok);
   REQUIRE(s2.step() == result_t::done);
 
   auto s3 = stmt(d, "SELECT a, b, c, d, e, f FROM t");
