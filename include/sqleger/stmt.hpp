@@ -4,6 +4,7 @@
 #include <sqleger/db_decl.hpp>
 #include <sqleger/int.hpp>
 #include <sqleger/result_exception.hpp>
+#include <sqleger/user_blob.hpp>
 #include <sqleger/utility.hpp>
 
 #include <sqlite3.h>
@@ -19,6 +20,8 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_stmt;
 
+  result_t bind_blob(int index, const user_blob& data) noexcept;
+
   result_t bind_double(int index, double value) noexcept;
 
   result_t bind_int(int index, int value) noexcept;
@@ -27,11 +30,15 @@ public:
 
   result_t bind_null(int index) noexcept;
 
+  const void* column_blob(int index) noexcept;
+
   double column_double(int index) noexcept;
 
   int column_int(int index) noexcept;
 
   int64 column_int64(int index) noexcept;
+
+  int column_bytes(int index) noexcept;
 
   datatype_t column_type(int index) noexcept;
 
@@ -83,6 +90,14 @@ private:
 
 
 template <typename Impl>
+result_t stmt_interface<Impl>::bind_blob(const int index,
+                                         const user_blob& data) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_blob(
+    c_ptr(), index, data.data(), data.size_bytes(), data.destructor()));
+}
+
+template <typename Impl>
 result_t stmt_interface<Impl>::bind_double(const int index,
                                            const double value) noexcept
 {
@@ -110,6 +125,12 @@ result_t stmt_interface<Impl>::bind_null(const int index) noexcept
 }
 
 template <typename Impl>
+const void* stmt_interface<Impl>::column_blob(const int index) noexcept
+{
+  return ::sqlite3_column_blob(c_ptr(), index);
+}
+
+template <typename Impl>
 double stmt_interface<Impl>::column_double(const int index) noexcept
 {
   return ::sqlite3_column_double(c_ptr(), index);
@@ -125,6 +146,12 @@ template <typename Impl>
 int64 stmt_interface<Impl>::column_int64(const int index) noexcept
 {
   return ::sqlite3_column_int64(c_ptr(), index);
+}
+
+template <typename Impl>
+int stmt_interface<Impl>::column_bytes(const int index) noexcept
+{
+  return ::sqlite3_column_bytes(c_ptr(), index);
 }
 
 template <typename Impl>

@@ -4,6 +4,9 @@
 #include <sqleger/db.hpp>
 #include <sqleger/stmt.hpp>
 
+#include <cstdint>
+#include <cstring>
+
 
 using namespace sqleger;
 
@@ -194,75 +197,103 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
 {
   auto d = db(":memory:");
 
-  auto s1 = stmt(
-    d,
-    "CREATE TABLE t("
-    "a REAL NOT NULL, b INTEGER NOT NULL, c INTEGER NOT NULL, d INTEGER)"sv);
+  auto s1 = stmt(d,
+                 "CREATE TABLE t("
+                 "a BLOB NOT NULL,"
+                 "b REAL NOT NULL,"
+                 "c INTEGER NOT NULL,"
+                 "d INTEGER NOT NULL,"
+                 "e INTEGER)"sv);
 
   REQUIRE(s1.step() == result_t::done);
 
-  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4)");
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5)");
 
-  const auto r1 = s2.bind_double(1, 0.25);
+  const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
+
+  const auto r1 = s2.bind_blob(1, v);
   REQUIRE(r1 == result_t::ok);
 
-  const auto r2 = s2.bind_int(2, 2);
+  const auto r2 = s2.bind_double(2, 0.25);
   REQUIRE(r2 == result_t::ok);
 
-  const auto r3 = s2.bind_int64(3, 3);
+  const auto r3 = s2.bind_int(3, 2);
   REQUIRE(r3 == result_t::ok);
 
-  const auto r4 = s2.bind_null(4);
+  const auto r4 = s2.bind_int64(4, 3);
   REQUIRE(r4 == result_t::ok);
 
-  const auto r5 = s2.step();
-  REQUIRE(r5 == result_t::done);
+  const auto r5 = s2.bind_null(5);
+  REQUIRE(r5 == result_t::ok);
+
+  const auto r6 = s2.step();
+  REQUIRE(r6 == result_t::done);
 }
 
 TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
 {
   auto d = db(":memory:");
 
-  auto s1 = stmt(
-    d,
-    "CREATE TABLE t("
-    "a REAL NOT NULL, b INTEGER NOT NULL, c INTEGER NOT NULL, d INTEGER)"sv);
+  auto s1 = stmt(d,
+                 "CREATE TABLE t("
+                 "a BLOB NOT NULL,"
+                 "b REAL NOT NULL,"
+                 "c INTEGER NOT NULL,"
+                 "d INTEGER NOT NULL,"
+                 "e INTEGER)"sv);
 
   REQUIRE(s1.step() == result_t::done);
 
-  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4)");
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5)");
 
-  REQUIRE(s2.bind_double(1, 0.25) == result_t::ok);
-  REQUIRE(s2.bind_int(2, 2) == result_t::ok);
-  REQUIRE(s2.bind_int64(3, 3) == result_t::ok);
-  REQUIRE(s2.bind_null(4) == result_t::ok);
+  const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
+
+  REQUIRE(s2.bind_blob(1, v) == result_t::ok);
+  REQUIRE(s2.bind_double(2, 0.25) == result_t::ok);
+  REQUIRE(s2.bind_int(3, 2) == result_t::ok);
+  REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
+  REQUIRE(s2.bind_null(5) == result_t::ok);
   REQUIRE(s2.step() == result_t::done);
 
-  auto s3 = stmt(d, "SELECT a, b, c, d FROM t");
+  auto s3 = stmt(d, "SELECT a, b, c, d, e FROM t");
 
   const auto r1 = s3.step();
   REQUIRE(r1 == result_t::row);
 
   const auto dt1 = s3.column_type(0);
-  REQUIRE(dt1 == datatype_t::_float);
+  REQUIRE(dt1 == datatype_t::blob);
 
   const auto dt2 = s3.column_type(1);
-  REQUIRE(dt2 == datatype_t::integer);
+  REQUIRE(dt2 == datatype_t::_float);
 
   const auto dt3 = s3.column_type(2);
   REQUIRE(dt3 == datatype_t::integer);
 
   const auto dt4 = s3.column_type(3);
-  REQUIRE(dt4 == datatype_t::null);
+  REQUIRE(dt4 == datatype_t::integer);
 
-  const auto a = s3.column_double(0);
-  REQUIRE(a == 0.25);
+  const auto dt5 = s3.column_type(4);
+  REQUIRE(dt5 == datatype_t::null);
 
-  const auto b = s3.column_int(1);
-  REQUIRE(b == 2);
+  const auto c0_sz = s3.column_bytes(0);
+  REQUIRE(c0_sz == 40);
 
-  const auto c = s3.column_int64(2);
-  REQUIRE(c == 3);
+  const auto* const c0 = s3.column_blob(0);
+  const auto c0_v = [&]() {
+    auto v = std::vector<uint64_t>(5);
+    std::memcpy(reinterpret_cast<void*>(v.data()), c0, c0_sz);
+    return v;
+  }();
+  REQUIRE(c0_v == v);
+
+  const auto c1 = s3.column_double(1);
+  REQUIRE(c1 == 0.25);
+
+  const auto c2 = s3.column_int(2);
+  REQUIRE(c2 == 2);
+
+  const auto c3 = s3.column_int64(3);
+  REQUIRE(c3 == 3);
 
   const auto r2 = s3.step();
   REQUIRE(r2 == result_t::done);
