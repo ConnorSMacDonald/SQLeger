@@ -309,15 +309,7 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
   REQUIRE(c5_sz == static_cast<int>(ss.length()));
 
   const auto c5 = s3.column_text(5);
-  const auto c5_ascii = [&]() {
-    auto v = std::vector<char>(ss.length());
-    std::transform(
-      c5.c_str(),
-      c5.c_str() + ss.length(),
-      v.begin(),
-      [](const unsigned char ch) { return static_cast<char>(ch); });
-    return std::string(v.data(), v.size());
-  }();
+  const auto c5_ascii = utf8_to_ascii(c5);
   REQUIRE(string_span(c5_ascii) == ss);
 
   const auto r2 = s3.step();

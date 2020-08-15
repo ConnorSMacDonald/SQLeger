@@ -3,6 +3,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 
 namespace sqleger {
@@ -74,6 +75,12 @@ constexpr bool operator>=(basic_zstring_view<Char> left,
 
 using zstring_view = basic_zstring_view<char>;
 using uzstring_view = basic_zstring_view<unsigned char>;
+
+
+template <typename Traits = std::char_traits<char>,
+          typename Allocator = std::allocator<char>>
+std::basic_string<char, Traits, Allocator>
+utf8_to_ascii(uzstring_view original, const Allocator& allocator = Allocator());
 
 
 inline namespace literals {
@@ -164,6 +171,13 @@ constexpr bool operator>=(basic_string_span<Char> left,
 
 
 using string_span = basic_string_span<char>;
+using ustring_span = basic_string_span<unsigned char>;
+
+
+template <typename Traits = std::char_traits<char>,
+          typename Allocator = std::allocator<char>>
+std::basic_string<char, Traits, Allocator>
+utf8_to_ascii(ustring_span original, const Allocator& allocator = Allocator());
 
 
 inline namespace literals {
@@ -174,6 +188,10 @@ constexpr string_span operator""_ss(const char* data,
 
 }; // namespace string_span_literals
 }; // namespace literals
+
+
+template <typename Char>
+constexpr int zlength(basic_zstring_view<Char> view) noexcept;
 
 
 // =============================================================================
@@ -273,6 +291,28 @@ constexpr bool operator>=(const basic_zstring_view<Char> left,
                           const basic_zstring_view<Char> right) noexcept
 {
   return !(left < right);
+}
+
+template <typename Traits, typename Allocator>
+std::basic_string<char, Traits, Allocator>
+utf8_to_ascii(const uzstring_view original, const Allocator& allocator)
+{
+  if constexpr (std::is_same_v<char, unsigned char>)
+    return original.to_std_string<Traits, Allocator>(original.c_str(),
+                                                     allocator);
+  else
+  {
+    const auto length = zlength(original);
+
+    auto v = std::vector<char, Allocator>(length, '\0', allocator);
+
+    std::transform(original.c_str(),
+                   original.c_str() + length,
+                   v.begin(),
+                   [](const unsigned char c) { return static_cast<char>(c); });
+
+    return {v.data(), v.size(), allocator};
+  }
 }
 
 inline namespace literals {
@@ -413,6 +453,30 @@ constexpr bool operator>=(const basic_string_span<Char> left,
   return !(left < right);
 }
 
+template <typename Traits, typename Allocator>
+std::basic_string<char, Traits, Allocator>
+utf8_to_ascii(const ustring_span original, const Allocator& allocator)
+{
+  if constexpr (std::is_same_v<char, unsigned char>)
+    return original.to_std_string<Traits, Allocator>(
+      original.data(), original.length(), allocator);
+  else
+  {
+    const auto real_length = (original.length() == ustring_span::zstring_size)
+                               ? zlength(uzstring_view(original.data()))
+                               : original.length();
+
+    auto v = std::vector<char, Allocator>(real_length, '\0', allocator);
+
+    std::transform(original.data(),
+                   original.data() + real_length,
+                   v.begin(),
+                   [](const unsigned char c) { return static_cast<char>(c); });
+
+    return {v.data(), v.size(), allocator};
+  }
+}
+
 inline namespace literals {
 inline namespace string_span_literals {
 
@@ -424,6 +488,18 @@ constexpr string_span operator""_ss(const char* const data,
 
 }; // namespace string_span_literals
 }; // namespace literals
+
+template <typename Char>
+constexpr int zlength(const basic_zstring_view<Char> view) noexcept
+{
+  int length {};
+  const auto* it = view.c_str();
+
+  while (*it++ != static_cast<Char>('\0'))
+    ++length;
+
+  return length;
+}
 
 
 }; // namespace sqleger

@@ -3,6 +3,7 @@
 
 #include <sqleger/string.hpp>
 
+#include <array>
 #include <cstring>
 
 
@@ -111,6 +112,19 @@ TEST_CASE("Two zstring views can be compared", "[string]")
     REQUIRE("abc "_zv > "abc"_zv);
     REQUIRE("abc "_zv >= "abc"_zv);
   }
+}
+
+TEST_CASE("A UTF8 encoded zstring view can be converted to a standard string",
+          "[string]")
+{
+  constexpr std::array<unsigned char, 4> a {static_cast<unsigned char>('a'),
+                                            static_cast<unsigned char>('b'),
+                                            static_cast<unsigned char>('c'),
+                                            static_cast<unsigned char>('\0')};
+  const auto uzv = uzstring_view(a.data());
+  const auto stds = utf8_to_ascii(uzv);
+
+  REQUIRE(stds == "abc");
 }
 
 TEST_CASE("A string span can be constructed from a C-style", "[string]")
@@ -272,5 +286,32 @@ TEST_CASE("Two string spans can be compared", "[string]")
     REQUIRE_FALSE("abc "_ss <= "abc"_ss);
     REQUIRE("abc "_ss > "abc"_ss);
     REQUIRE("abc "_ss >= "abc"_ss);
+  }
+}
+
+TEST_CASE("A UTF8 encoded string span can be converted to a standard string",
+          "[string]")
+{
+  SECTION("null-terminated")
+  {
+    constexpr std::array<unsigned char, 4> a {static_cast<unsigned char>('a'),
+                                              static_cast<unsigned char>('b'),
+                                              static_cast<unsigned char>('c'),
+                                              static_cast<unsigned char>('\0')};
+    const auto ss = ustring_span(a.data());
+    const auto stds = utf8_to_ascii(ss);
+
+    REQUIRE(stds == "abc");
+  }
+
+  SECTION("not null-terminated")
+  {
+    constexpr std::array<unsigned char, 3> a {static_cast<unsigned char>('a'),
+                                              static_cast<unsigned char>('b'),
+                                              static_cast<unsigned char>('c')};
+    const auto ss = ustring_span(a.data(), 3);
+    const auto stds = utf8_to_ascii(ss);
+
+    REQUIRE(stds == "abc");
   }
 }
