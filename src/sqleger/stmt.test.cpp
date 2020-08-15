@@ -315,3 +315,24 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
   const auto r2 = s3.step();
   REQUIRE(r2 == result_t::done);
 }
+
+TEST_CASE("A stmt can have its bindings cleared", "[stmt]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
+
+  REQUIRE(s1.step() == result_t::done);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
+
+  REQUIRE(s2.bind_int(1, 7) == result_t::ok);
+
+  const auto r1 = s2.clear_bindings();
+
+  REQUIRE(is_non_error(r1));
+
+  const auto r2 = s2.step();
+
+  REQUIRE(is_error(r2));
+}

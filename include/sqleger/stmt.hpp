@@ -51,6 +51,8 @@ public:
 
   result_t reset() noexcept;
 
+  result_t clear_bindings() noexcept;
+
   zstring_view sql() const noexcept;
 
 private:
@@ -189,6 +191,12 @@ template <typename Impl>
 result_t stmt_interface<Impl>::reset() noexcept
 {
   return int_to_enum<result_t>(::sqlite3_reset(c_ptr()));
+}
+
+template <typename Impl>
+result_t stmt_interface<Impl>::clear_bindings() noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_clear_bindings(c_ptr()));
 }
 
 template <typename Impl>
