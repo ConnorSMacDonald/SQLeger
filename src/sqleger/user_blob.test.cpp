@@ -3,6 +3,8 @@
 
 #include <sqleger/user_blob.hpp>
 
+#include <cstdint>
+
 
 using namespace sqleger;
 
