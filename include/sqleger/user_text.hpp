@@ -47,7 +47,7 @@ basic_user_text<Char>::basic_user_text(
   const string_span span,
   const destructor_type destructor) noexcept :
   data_ {span.data()},
-  size_bytes_ {static_cast<size_type>(span.size() * sizeof(Char))},
+  size_bytes_ {static_cast<size_type>(span.length() * sizeof(Char))},
   destructor_ {destructor}
 {
 }
