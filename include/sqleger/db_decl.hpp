@@ -21,7 +21,7 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3;
 
-  result_t prepare_v2(const string_span& sql, stmt& result) noexcept;
+  result_t prepare_v2(string_span sql, stmt& result) noexcept;
 
   zstring_view errmsg() const noexcept;
 
@@ -35,17 +35,16 @@ class db : public db_interface<db> {
 public:
   using interface_type = db_interface<db>;
 
-  static inline result_t open(const zstring_view& filename,
-                              db& result) noexcept;
+  static inline result_t open(zstring_view filename, db& result) noexcept;
 
   static inline result_t
-  open_v2(const zstring_view& filename, db& result, open_t flags) noexcept;
+  open_v2(zstring_view filename, db& result, open_t flags) noexcept;
 
   constexpr db() noexcept = default;
 
-  inline db(const zstring_view& filename);
+  inline db(zstring_view filename);
 
-  inline db(const zstring_view& filename, open_t flags);
+  inline db(zstring_view filename, open_t flags);
 
   explicit constexpr db(c_type* c_ptr) noexcept;
 

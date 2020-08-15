@@ -12,7 +12,7 @@ namespace sqleger {
 
 
 template <typename Impl>
-result_t db_interface<Impl>::prepare_v2(const string_span& sql,
+result_t db_interface<Impl>::prepare_v2(const string_span sql,
                                         stmt& result) noexcept
 {
   return int_to_enum<result_t>(::sqlite3_prepare_v2(
@@ -31,13 +31,13 @@ constexpr auto db_interface<Impl>::c_ptr() const noexcept -> c_type*
   return static_cast<const impl_type*>(this)->c_ptr();
 }
 
-result_t db::open(const zstring_view& filename, db& result) noexcept
+result_t db::open(const zstring_view filename, db& result) noexcept
 {
   return int_to_enum<result_t>(
     ::sqlite3_open(filename.c_str(), &result.c_ptr_));
 }
 
-result_t db::open_v2(const zstring_view& filename,
+result_t db::open_v2(const zstring_view filename,
                      db& result,
                      const open_t flags) noexcept
 {
@@ -45,13 +45,13 @@ result_t db::open_v2(const zstring_view& filename,
     filename.c_str(), &result.c_ptr_, enum_to_int(flags), nullptr));
 }
 
-db::db(const zstring_view& filename)
+db::db(const zstring_view filename)
 {
   if (const auto r = open(filename, *this); is_error(r))
     throw open_exception(r, std::move(*this));
 }
 
-db::db(const zstring_view& filename, const open_t flags)
+db::db(const zstring_view filename, const open_t flags)
 {
   if (const auto r = open_v2(filename, *this, flags); is_error(r))
     throw open_exception(r, std::move(*this));

@@ -66,7 +66,7 @@ public:
   constexpr stmt() noexcept = default;
 
   template <typename DbImpl>
-  stmt(db_interface<DbImpl>& connection, const string_span& sql);
+  stmt(db_interface<DbImpl>& connection, string_span sql);
 
   explicit constexpr stmt(c_type* c_ptr) noexcept;
 
@@ -204,7 +204,7 @@ auto stmt_interface<Impl>::c_ptr() const noexcept -> c_type*
 }
 
 template <typename DbImpl>
-stmt::stmt(db_interface<DbImpl>& connection, const string_span& sql)
+stmt::stmt(db_interface<DbImpl>& connection, const string_span sql)
 {
   if (const auto r = connection.prepare_v2(sql, *this); is_error(r))
     throw result_exception(r);
