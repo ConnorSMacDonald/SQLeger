@@ -306,7 +306,7 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
   REQUIRE(c3 == 3);
 
   const auto c5_sz = s3.column_bytes(5);
-  REQUIRE(c5_sz == static_cast<int>(ss.length()));
+  REQUIRE(c5_sz == ss.length());
 
   const auto c5 = s3.column_text(5);
   const auto c5_ascii = utf8_to_ascii(c5);
