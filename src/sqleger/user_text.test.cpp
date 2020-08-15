@@ -5,43 +5,42 @@
 
 
 using namespace sqleger;
-
-using namespace std::string_literals;
-using namespace std::string_view_literals;
+using namespace sqleger::string_span_literals;
+using namespace sqleger::zstring_view_literals;
 
 
 TEST_CASE("A user text can be constructed", "[user_text]")
 {
   SECTION("zstring, transient")
   {
-    constexpr const char* cs = "asljdfkjsdjfaj sdfa;lsdjlfasdjf";
+    constexpr auto zv = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_zv;
 
-    const auto ut = user_text(cs);
+    const auto ut = user_text(zv);
 
-    REQUIRE(ut.data() == cs);
+    REQUIRE(ut.data() == zv.c_str());
     REQUIRE(ut.size_bytes() == user_text::zstring_size);
     REQUIRE(ut.destructor() == transient);
   }
 
   SECTION("zstring, static")
   {
-    constexpr const char* cs = "asljdfkjsdjfaj sdfa;lsdjlfasdjf";
+    constexpr auto zv = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_zv;
 
-    const auto ut = user_text(cs, _static);
+    const auto ut = user_text(zv, _static);
 
-    REQUIRE(ut.data() == cs);
+    REQUIRE(ut.data() == zv.c_str());
     REQUIRE(ut.size_bytes() == user_text::zstring_size);
     REQUIRE(ut.destructor() == _static);
   }
 
   SECTION("bounded string, transient")
   {
-    const auto ssv = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"sv;
+    const auto ss = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_ss;
 
-    const auto ut = user_text(ssv);
+    const auto ut = user_text(ss);
 
-    REQUIRE(ut.data() == ssv.data());
-    REQUIRE(ut.size_bytes() == static_cast<int>(ssv.size()));
+    REQUIRE(ut.data() == ss.data());
+    REQUIRE(ut.size_bytes() == ss.size());
     REQUIRE(ut.destructor() == transient);
   }
 }
