@@ -46,6 +46,7 @@ private:
 };
 
 using zstring_view = basic_zstring_view<char>;
+using uzstring_view = basic_zstring_view<unsigned char>;
 
 
 template <typename Char>
