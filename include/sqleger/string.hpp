@@ -63,6 +63,9 @@ public:
   constexpr basic_string_span(const char_type* data,
                               size_type size = zstring_size) noexcept;
 
+  constexpr basic_string_span(const basic_zstring_view<char_type>& view,
+                              size_type size = zstring_size) noexcept;
+
   template <typename Traits, typename Allocator>
   basic_string_span(
     const std::basic_string<char_type, Traits, Allocator>& string) noexcept;
@@ -154,6 +157,14 @@ constexpr basic_string_span<Char>::basic_string_span(
   const size_type size) noexcept :
   data_ {data},
   size_ {size}
+{
+}
+
+template <typename Char>
+constexpr basic_string_span<Char>::basic_string_span(
+  const basic_zstring_view<Char>& view,
+  const size_type size) noexcept :
+  basic_string_span {view.c_str(), size}
 {
 }
 

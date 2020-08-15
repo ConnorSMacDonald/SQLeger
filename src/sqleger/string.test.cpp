@@ -73,6 +73,27 @@ TEST_CASE("A string span can be constructed from a char pointer and a size",
   REQUIRE(ss.data() == cs);
 }
 
+TEST_CASE("A string span can be constructed from a zstring view", "[string]")
+{
+  constexpr auto* const cs = "l;jj;l HND vamlfsv m;la/dgfa423e985r3==--0)()&";
+  constexpr auto zv = zstring_view(cs);
+  constexpr auto ss = string_span(zv);
+
+  REQUIRE(ss.size() == string_span::zstring_size);
+  REQUIRE(ss.data() == cs);
+}
+
+TEST_CASE("A string span can be constructed from a zstring view and a size",
+          "[string]")
+{
+  constexpr auto* const cs = "l;jj;l HND vamlfsv m;la/dgfa423e985r3==--0)()&";
+  constexpr auto zv = zstring_view(cs);
+  constexpr auto ss = string_span(zv, 4);
+
+  REQUIRE(ss.size() == 4);
+  REQUIRE(ss.data() == cs);
+}
+
 TEST_CASE("A string span can be constructed from a standard string", "[string]")
 {
   const auto stds = "jljj asjkd fjklasdfj sajl;ASDF ASD"s;
