@@ -1,5 +1,5 @@
-#ifndef SQLEGER_INT_HPP_INCLUDED
-#define SQLEGER_INT_HPP_INCLUDED
+#ifndef SQLEGER_INT_HPP
+#define SQLEGER_INT_HPP
 
 #include <sqlite3.h>
 
