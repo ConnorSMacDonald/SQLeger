@@ -102,7 +102,7 @@ public:
   using size_type = int;
 
   static constexpr size_type zstring_length = -1;
-  static constexpr size_type zstring_size = zstring_size;
+  static constexpr size_type zstring_size = zstring_length;
 
   constexpr basic_string_span(const char_type* data,
                               size_type size = zstring_size) noexcept;
