@@ -329,10 +329,8 @@ TEST_CASE("A stmt can have its bindings cleared", "[stmt]")
   REQUIRE(s2.bind_int(1, 7) == result_t::ok);
 
   const auto r1 = s2.clear_bindings();
-
   REQUIRE(is_non_error(r1));
 
   const auto r2 = s2.step();
-
   REQUIRE(is_error(r2));
 }
