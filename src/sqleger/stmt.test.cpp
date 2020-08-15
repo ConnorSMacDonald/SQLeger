@@ -4,6 +4,7 @@
 #include <sqleger/db.hpp>
 #include <sqleger/stmt.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <cstring>
 
@@ -203,11 +204,12 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
                  "b REAL NOT NULL,"
                  "c INTEGER NOT NULL,"
                  "d INTEGER NOT NULL,"
-                 "e INTEGER)"sv);
+                 "e INTEGER,"
+                 "f TEXT NOT NULL)"sv);
 
   REQUIRE(s1.step() == result_t::done);
 
-  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5)");
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)");
 
   const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
 
@@ -226,8 +228,11 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
   const auto r5 = s2.bind_null(5);
   REQUIRE(r5 == result_t::ok);
 
-  const auto r6 = s2.step();
-  REQUIRE(r6 == result_t::done);
+  const auto r6 = s2.bind_text(6, "aal;sdfkjjk aAAV NFLS4E352");
+  REQUIRE(r6 == result_t::ok);
+
+  const auto r7 = s2.step();
+  REQUIRE(r7 == result_t::done);
 }
 
 TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
@@ -240,22 +245,25 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
                  "b REAL NOT NULL,"
                  "c INTEGER NOT NULL,"
                  "d INTEGER NOT NULL,"
-                 "e INTEGER)"sv);
+                 "e INTEGER,"
+                 "f TEXT NOT NULL)"sv);
 
   REQUIRE(s1.step() == result_t::done);
 
-  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5)");
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)");
 
   const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
+  constexpr auto ssv = " vqlflz.tlue VPNRE103-====++++"sv;
 
   REQUIRE(s2.bind_blob(1, v) == result_t::ok);
   REQUIRE(s2.bind_double(2, 0.25) == result_t::ok);
   REQUIRE(s2.bind_int(3, 2) == result_t::ok);
   REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
   REQUIRE(s2.bind_null(5) == result_t::ok);
+  REQUIRE(s2.bind_text(6, ssv) == result_t::ok);
   REQUIRE(s2.step() == result_t::done);
 
-  auto s3 = stmt(d, "SELECT a, b, c, d, e FROM t");
+  auto s3 = stmt(d, "SELECT a, b, c, d, e, f FROM t");
 
   const auto r1 = s3.step();
   REQUIRE(r1 == result_t::row);
@@ -274,6 +282,9 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
 
   const auto dt5 = s3.column_type(4);
   REQUIRE(dt5 == datatype_t::null);
+
+  const auto dt6 = s3.column_type(5);
+  REQUIRE(dt6 == datatype_t::text);
 
   const auto c0_sz = s3.column_bytes(0);
   REQUIRE(c0_sz == 40);
@@ -294,6 +305,21 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
 
   const auto c3 = s3.column_int64(3);
   REQUIRE(c3 == 3);
+
+  const auto c5_sz = s3.column_bytes(5);
+  REQUIRE(c5_sz == static_cast<int>(ssv.length()));
+
+  const auto c5 = s3.column_text(5);
+  const auto c5_ascii = [&]() {
+    auto v = std::vector<char>(ssv.length());
+    std::transform(
+      c5.c_str(),
+      c5.c_str() + ssv.length(),
+      v.begin(),
+      [](const unsigned char ch) { return static_cast<char>(ch); });
+    return std::string(v.data(), v.size());
+  }();
+  REQUIRE(c5_ascii == ssv);
 
   const auto r2 = s3.step();
   REQUIRE(r2 == result_t::done);

@@ -5,6 +5,7 @@
 #include <sqleger/int.hpp>
 #include <sqleger/result_exception.hpp>
 #include <sqleger/user_blob.hpp>
+#include <sqleger/user_text.hpp>
 #include <sqleger/utility.hpp>
 
 #include <sqlite3.h>
@@ -30,6 +31,8 @@ public:
 
   result_t bind_null(int index) noexcept;
 
+  result_t bind_text(int index, const user_text& text) noexcept;
+
   const void* column_blob(int index) noexcept;
 
   double column_double(int index) noexcept;
@@ -37,6 +40,8 @@ public:
   int column_int(int index) noexcept;
 
   int64 column_int64(int index) noexcept;
+
+  uzstring_view column_text(int index) noexcept;
 
   int column_bytes(int index) noexcept;
 
@@ -125,6 +130,14 @@ result_t stmt_interface<Impl>::bind_null(const int index) noexcept
 }
 
 template <typename Impl>
+result_t stmt_interface<Impl>::bind_text(const int index,
+                                         const user_text& text) noexcept
+{
+  return int_to_enum<result_t>(::sqlite3_bind_text(
+    c_ptr(), index, text.data(), text.size_bytes(), text.destructor()));
+}
+
+template <typename Impl>
 const void* stmt_interface<Impl>::column_blob(const int index) noexcept
 {
   return ::sqlite3_column_blob(c_ptr(), index);
@@ -146,6 +159,12 @@ template <typename Impl>
 int64 stmt_interface<Impl>::column_int64(const int index) noexcept
 {
   return ::sqlite3_column_int64(c_ptr(), index);
+}
+
+template <typename Impl>
+uzstring_view stmt_interface<Impl>::column_text(const int index) noexcept
+{
+  return ::sqlite3_column_text(c_ptr(), index);
 }
 
 template <typename Impl>
