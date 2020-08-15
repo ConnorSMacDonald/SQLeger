@@ -101,7 +101,8 @@ public:
   using default_allocator_type = typename std::allocator<char_type>;
   using size_type = int;
 
-  static constexpr size_type zstring_size = -1;
+  static constexpr size_type zstring_length = -1;
+  static constexpr size_type zstring_size = zstring_size;
 
   constexpr basic_string_span(const char_type* data,
                               size_type size = zstring_size) noexcept;
