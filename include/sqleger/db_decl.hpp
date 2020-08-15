@@ -26,7 +26,7 @@ public:
   zstring_view errmsg() const noexcept;
 
 private:
-  c_type* c_ptr() const noexcept;
+  constexpr c_type* c_ptr() const noexcept;
 };
 
 
