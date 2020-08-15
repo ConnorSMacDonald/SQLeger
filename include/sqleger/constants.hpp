@@ -180,13 +180,12 @@ constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
 
   // TODO: in C++20, use constexpr accumulate
 
-  auto result = static_cast<Enum>(0);
+  auto result = static_cast<int_type>(0);
 
   for (const auto e : values)
-    result = static_cast<Enum>(static_cast<int_type>(result)
-                               | static_cast<int_type>(e));
+    result |= static_cast<int_type>(e);
 
-  return result;
+  return static_cast<Enum>(result);
 }
 
 inline zstring_view errstr(const result_t code) noexcept
@@ -196,7 +195,7 @@ inline zstring_view errstr(const result_t code) noexcept
 
 constexpr result_t primary_result(const result_t code) noexcept
 {
-  return static_cast<result_t>(static_cast<unsigned int>(code) & 0xFF);
+  return static_cast<result_t>(static_cast<int>(code) & 0xFF);
 }
 
 constexpr bool is_error(const result_t code) noexcept
