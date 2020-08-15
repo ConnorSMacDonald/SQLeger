@@ -13,7 +13,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 {
   SECTION("array, transient")
   {
-    constexpr std::array<uint64_t, 10> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    constexpr std::array<uint64_t, 10> a {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(a);
 
@@ -24,7 +24,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("array, static")
   {
-    constexpr std::array<uint64_t, 10> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    constexpr std::array<uint64_t, 10> a {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(a, _static);
 
@@ -35,7 +35,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("vector, transient")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v);
 
@@ -46,7 +46,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("vector, static")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v, _static);
 
@@ -57,7 +57,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("continguous iterator, transient")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v.begin(), v.end());
 
@@ -68,7 +68,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("continguous iterator, static")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v.begin(), v.end(), _static);
 
@@ -79,7 +79,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("data and pointer, transient")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v.data(), static_cast<int>(v.size()));
 
@@ -90,7 +90,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
   SECTION("data and pointer, static")
   {
-    const std::vector<uint64_t> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const std::vector<uint64_t> v {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     const auto ub = user_blob(v.data(), static_cast<int>(v.size()), _static);
 
