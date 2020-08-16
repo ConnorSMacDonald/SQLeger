@@ -193,7 +193,7 @@ TEST_CASE("A stmt can be reset", "[stmt]")
   REQUIRE(r3 == result_t::done);
 }
 
-TEST_CASE("A stmt can be bound to", "[stmt]")
+TEST_CASE("Data can be bound to a stmt", "[stmt]")
 {
   auto d = db(":memory:");
 
@@ -234,7 +234,7 @@ TEST_CASE("A stmt can be bound to", "[stmt]")
   REQUIRE(r7 == result_t::done);
 }
 
-TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
+TEST_CASE("Column can be retrieved from a stmt", "[stmt]")
 {
   auto d = db(":memory:");
 
@@ -316,7 +316,7 @@ TEST_CASE("Data can be retrieved from a stmt", "[stmt]")
   REQUIRE(r2 == result_t::done);
 }
 
-TEST_CASE("A stmt can have its bindings cleared", "[stmt]")
+TEST_CASE("Bindings can be cleared on a stmt", "[stmt]")
 {
   auto d = db(":memory:");
 
