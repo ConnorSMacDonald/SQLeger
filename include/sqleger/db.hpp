@@ -20,6 +20,12 @@ result_t db_interface<Impl>::prepare_v2(const string_span sql,
 }
 
 template <typename Impl>
+int64 db_interface<Impl>::last_insert_rowid() noexcept
+{
+  return ::sqlite3_last_insert_rowid(c_ptr());
+}
+
+template <typename Impl>
 zstring_view db_interface<Impl>::errmsg() const noexcept
 {
   return ::sqlite3_errmsg(c_ptr());

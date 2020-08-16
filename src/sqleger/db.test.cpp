@@ -246,3 +246,20 @@ TEST_CASE("A db ref can be constructed", "[db]")
     REQUIRE(dr.c_ptr() == d.c_ptr());
   }
 }
+
+TEST_CASE("The last insert rowid can be retrieved from a db", "[db]")
+{
+  auto d = db(":memory:");
+
+  const auto ri1 = d.last_insert_rowid();
+  REQUIRE(ri1 == 0);
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+  REQUIRE(s1.step() == result_t::done);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
+  REQUIRE(s2.step() == result_t::done);
+
+  const auto ri2 = d.last_insert_rowid();
+  REQUIRE(ri2 == 1);
+}

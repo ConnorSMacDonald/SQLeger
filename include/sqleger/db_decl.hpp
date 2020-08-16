@@ -2,6 +2,7 @@
 #define SQLEGER_DB_DECL_HPP
 
 #include <sqleger/constants.hpp>
+#include <sqleger/int.hpp>
 #include <sqleger/result_exception.hpp>
 #include <sqleger/string.hpp>
 
@@ -22,6 +23,8 @@ public:
   using c_type = ::sqlite3;
 
   result_t prepare_v2(string_span sql, stmt& result) noexcept;
+
+  int64 last_insert_rowid() noexcept;
 
   zstring_view errmsg() const noexcept;
 
