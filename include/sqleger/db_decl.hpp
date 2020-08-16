@@ -30,6 +30,9 @@ private:
 };
 
 
+class db_ref;
+
+
 class db : public db_interface<db> {
 
 public:
@@ -60,7 +63,11 @@ public:
 
   constexpr c_type* take_c_ptr() noexcept;
 
-  c_type* c_ptr() const noexcept { return c_ptr_; }
+  constexpr c_type* c_ptr() const noexcept { return c_ptr_; }
+
+  constexpr db_ref ref() noexcept;
+
+  constexpr operator db_ref() noexcept;
 
 private:
   inline result_t do_close_v2() noexcept;
@@ -80,6 +87,22 @@ public:
 
 private:
   db db_;
+};
+
+
+class db_ref : public db_interface<db_ref> {
+
+public:
+  using interface_type = db_interface<db_ref>;
+
+  explicit constexpr db_ref(c_type* c_ptr) noexcept;
+
+  explicit constexpr db_ref(db& other) noexcept;
+
+  constexpr c_type* c_ptr() const noexcept { return c_ptr_; }
+
+private:
+  c_type* c_ptr_ = nullptr;
 };
 
 

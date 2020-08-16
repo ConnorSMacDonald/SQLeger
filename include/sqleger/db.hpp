@@ -102,6 +102,16 @@ constexpr auto db::take_c_ptr() noexcept -> c_type*
   return exchange_nullptr(c_ptr_);
 }
 
+constexpr db_ref db::ref() noexcept
+{
+  return db_ref(*this);
+}
+
+constexpr db::operator db_ref() noexcept
+{
+  return ref();
+}
+
 result_t db::do_close_v2() noexcept
 {
   return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
@@ -117,6 +127,10 @@ const char* open_exception::what() const noexcept
 {
   return db_.errmsg();
 }
+
+constexpr db_ref::db_ref(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
+
+constexpr db_ref::db_ref(db& other) noexcept : db_ref {other.c_ptr()} {}
 
 
 }; // namespace sqleger

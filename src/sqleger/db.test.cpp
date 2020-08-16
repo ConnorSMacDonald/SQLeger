@@ -227,3 +227,22 @@ TEST_CASE("A db can be moved", "[db]")
     REQUIRE(d1.c_ptr() == nullptr);
   }
 }
+
+TEST_CASE("A db ref can be constructed", "[db]")
+{
+  SECTION("from pointer")
+  {
+    auto d = db(":memory:");
+    auto dr = db_ref(d.c_ptr());
+
+    REQUIRE(dr.c_ptr() == d.c_ptr());
+  }
+
+  SECTION("from db")
+  {
+    auto d = db(":memory:");
+    auto dr = db_ref(d);
+
+    REQUIRE(dr.c_ptr() == d.c_ptr());
+  }
+}
