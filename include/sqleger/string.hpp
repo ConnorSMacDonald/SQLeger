@@ -80,7 +80,7 @@ using uzstring_view = basic_zstring_view<unsigned char>;
 template <typename Traits = std::char_traits<char>,
           typename Allocator = std::allocator<char>>
 std::basic_string<char, Traits, Allocator>
-utf8_to_ascii(uzstring_view original, const Allocator& allocator = Allocator());
+utf8_to_ascii(uzstring_view utf8, const Allocator& allocator = Allocator());
 
 
 inline namespace literals {
@@ -178,7 +178,7 @@ using ustring_span = basic_string_span<unsigned char>;
 template <typename Traits = std::char_traits<char>,
           typename Allocator = std::allocator<char>>
 std::basic_string<char, Traits, Allocator>
-utf8_to_ascii(ustring_span original, const Allocator& allocator = Allocator());
+utf8_to_ascii(ustring_span utf8, const Allocator& allocator = Allocator());
 
 
 inline namespace literals {
@@ -296,23 +296,25 @@ constexpr bool operator>=(const basic_zstring_view<Char> left,
 
 template <typename Traits, typename Allocator>
 std::basic_string<char, Traits, Allocator>
-utf8_to_ascii(const uzstring_view original, const Allocator& allocator)
+utf8_to_ascii(const uzstring_view utf8, const Allocator& allocator)
 {
   if constexpr (std::is_same_v<char, unsigned char>)
-    return original.to_std_string<Traits, Allocator>(original.c_str(),
-                                                     allocator);
+    return utf8.to_std_string<Traits, Allocator>(utf8.c_str(), allocator);
   else
   {
-    const auto length = zlength(original);
+    using std_string_type = std::basic_string<char, Traits, Allocator>;
 
-    auto v = std::vector<char, Allocator>(length, '\0', allocator);
+    const auto length
+      = static_cast<typename std_string_type::size_type>(zlength(utf8));
 
-    std::transform(original.c_str(),
-                   original.c_str() + length,
-                   v.begin(),
+    auto ascii = std_string_type(length, '\0', allocator);
+
+    std::transform(utf8.c_str(),
+                   utf8.c_str() + length,
+                   ascii.begin(),
                    [](const unsigned char c) { return static_cast<char>(c); });
 
-    return {v.data(), v.size(), allocator};
+    return ascii;
   }
 }
 
@@ -456,25 +458,28 @@ constexpr bool operator>=(const basic_string_span<Char> left,
 
 template <typename Traits, typename Allocator>
 std::basic_string<char, Traits, Allocator>
-utf8_to_ascii(const ustring_span original, const Allocator& allocator)
+utf8_to_ascii(const ustring_span utf8, const Allocator& allocator)
 {
   if constexpr (std::is_same_v<char, unsigned char>)
-    return original.to_std_string<Traits, Allocator>(
-      original.data(), original.length(), allocator);
+    return utf8.to_std_string<Traits, Allocator>(
+      utf8.data(), utf8.length(), allocator);
   else
   {
-    const auto real_length = (original.length() == ustring_span::zstring_size)
-                               ? zlength(uzstring_view(original.data()))
-                               : original.length();
+    using std_string_type = std::basic_string<char, Traits, Allocator>;
 
-    auto v = std::vector<char, Allocator>(real_length, '\0', allocator);
+    const auto real_length = static_cast<typename std_string_type::size_type>(
+      (utf8.length() == ustring_span::zstring_size)
+        ? zlength(uzstring_view(utf8.data()))
+        : utf8.length());
 
-    std::transform(original.data(),
-                   original.data() + real_length,
-                   v.begin(),
+    auto ascii = std_string_type(real_length, '\0', allocator);
+
+    std::transform(utf8.data(),
+                   utf8.data() + real_length,
+                   ascii.begin(),
                    [](const unsigned char c) { return static_cast<char>(c); });
 
-    return {v.data(), v.size(), allocator};
+    return ascii;
   }
 }
 
