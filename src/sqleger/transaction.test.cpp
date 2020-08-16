@@ -27,7 +27,7 @@ TEST_CASE("A transaction can be used as an RAII interface", "[transaction]")
       t.commit();
     }
 
-    auto s3 = stmt(d, "SELECT x FROM t");
+    auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::row);
     REQUIRE(s3.step() == result_t::done);
   }
@@ -46,7 +46,7 @@ TEST_CASE("A transaction can be used as an RAII interface", "[transaction]")
       REQUIRE(s2.step() == result_t::done);
     }
 
-    auto s3 = stmt(d, "SELECT x FROM t");
+    auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::done);
   }
 }
