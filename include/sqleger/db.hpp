@@ -123,9 +123,9 @@ result_t db::do_close_v2() noexcept
   return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
 }
 
-open_exception::open_exception(const result_t code, db&& connection) noexcept :
+open_exception::open_exception(const result_t code, db&& db_handle) noexcept :
   result_exception {code},
-  db_ {std::move(connection)}
+  db_ {std::move(db_handle)}
 {
 }
 

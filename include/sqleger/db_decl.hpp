@@ -82,7 +82,7 @@ private:
 class open_exception : public result_exception {
 
 public:
-  inline open_exception(result_t code, db&& connection) noexcept;
+  inline open_exception(result_t code, db&& db_handle) noexcept;
 
   open_exception(open_exception&& other) noexcept = default;
 

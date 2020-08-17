@@ -67,7 +67,7 @@ public:
 
   constexpr stmt() noexcept = default;
 
-  stmt(db_ref connection, string_span sql);
+  stmt(db_ref db_handle, string_span sql);
 
   explicit constexpr stmt(c_type* c_ptr) noexcept;
 
@@ -210,9 +210,9 @@ auto stmt_interface<Impl>::c_ptr() const noexcept -> c_type*
   return static_cast<const impl_type*>(this)->c_ptr();
 }
 
-stmt::stmt(db_ref connection, const string_span sql)
+stmt::stmt(db_ref db_handle, const string_span sql)
 {
-  if (const auto r = connection.prepare_v2(sql, *this); is_error(r))
+  if (const auto r = db_handle.prepare_v2(sql, *this); is_error(r))
     throw result_exception(r);
 }
 
