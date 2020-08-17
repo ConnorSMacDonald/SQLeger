@@ -8,10 +8,19 @@
 namespace sqleger {
 
 
+enum class transaction_t {
+  deferred,
+  immediate,
+  exclusive,
+};
+
+
 class transaction {
 
 public:
-  inline transaction(db_ref connection);
+  inline transaction(db_ref db_handle);
+
+  inline transaction(db_ref db_handle, transaction_t type);
 
   transaction(transaction&& other) noexcept = default;
 
@@ -19,40 +28,128 @@ public:
 
   inline ~transaction() noexcept;
 
-  inline void commit(bool enable = true) noexcept;
+  inline void commit() noexcept;
+
+  inline void rollback() noexcept;
+
+  inline result_t commit_now() noexcept;
+
+  inline result_t rollback_now() noexcept;
+
+  db_ref db_handle() const noexcept { return db_; }
 
 private:
-  stmt commit_stmt_;
-  stmt rollback_stmt_;
+  enum class outcome { commit, rollback };
 
-  bool commit_ = false;
+  inline result_t do_commit() noexcept;
+
+  inline result_t do_rollback() noexcept;
+
+  db_ref db_;
+  outcome outcome_ = outcome::rollback;
 };
 
 
 // =============================================================================
 
 
-transaction::transaction(const db_ref connection) :
-  commit_stmt_ {connection, "COMMIT TRANSACTION"},
-  rollback_stmt_ {connection, "ROLLBACK TRANSACTION"}
+transaction::transaction(const db_ref db_handle) : db_ {db_handle}
 {
-  auto begin_stmt = stmt(connection, "BEGIN TRANSACTION");
+  using namespace string_span_literals;
+
+  auto begin_stmt = stmt(db_handle, "BEGIN TRANSACTION"_ss);
 
   if (const auto r = begin_stmt.step(); r != result_t::done)
     throw result_exception(r);
 }
 
-transaction::~transaction() noexcept
+transaction::transaction(const db_ref db_handle, const transaction_t type) :
+  db_ {db_handle}
 {
-  if (commit_)
-    commit_stmt_.step();
-  else
-    rollback_stmt_.step();
+  using namespace std::string_literals;
+
+  const auto type_string = [&]() {
+    switch (type)
+    {
+      case transaction_t::deferred:
+        return "DEFERRED"s;
+      case transaction_t::exclusive:
+        return "EXCLUSIVE"s;
+      case transaction_t::immediate:
+        return "IMMEDIATE"s;
+    }
+
+    return ""s;
+  }();
+
+  auto begin_stmt = stmt(db_, "BEGIN "s + type_string + " TRANSACTION"s);
+
+  if (const auto r = begin_stmt.step(); is_error(r))
+    throw result_exception(r);
 }
 
-void transaction::commit(const bool enable) noexcept
+transaction::~transaction() noexcept
 {
-  commit_ = enable;
+  if (db_.c_ptr() == nullptr)
+    return;
+
+  switch (outcome_)
+  {
+    case outcome::commit:
+      do_commit();
+      return;
+    case outcome::rollback:
+      do_rollback();
+      return;
+  }
+}
+
+void transaction::commit() noexcept
+{
+  outcome_ = outcome::commit;
+}
+
+void transaction::rollback() noexcept
+{
+  outcome_ = outcome::rollback;
+}
+
+result_t transaction::commit_now() noexcept
+{
+  const auto r = do_commit();
+  db_ = db_ref();
+  return r;
+}
+
+result_t transaction::rollback_now() noexcept
+{
+  const auto r = do_rollback();
+  db_ = db_ref();
+  return r;
+}
+
+result_t transaction::do_commit() noexcept
+{
+  using namespace string_span_literals;
+
+  stmt s;
+
+  if (const auto r = db_.prepare_v2("COMMIT TRANSACTION"_ss, s); is_error(r))
+    return r;
+
+  return s.step();
+}
+
+result_t transaction::do_rollback() noexcept
+{
+  using namespace string_span_literals;
+
+  stmt s;
+
+  if (const auto r = db_.prepare_v2("ROLLBACK TRANSACTION"_ss, s); is_error(r))
+    return r;
+
+  return s.step();
 }
 
 

@@ -49,4 +49,45 @@ TEST_CASE("A transaction can be used as an RAII interface", "[transaction]")
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::done);
   }
+
+  SECTION("immediate commit")
+  {
+    auto d = db(":memory:");
+
+    auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+    REQUIRE(s1.step() == result_t::done);
+
+    auto t = transaction(d);
+
+    auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
+    REQUIRE(s2.step() == result_t::done);
+
+    const auto r = t.commit_now();
+    REQUIRE(is_non_error(r));
+    REQUIRE(t.db_handle().c_ptr() == nullptr);
+
+    auto s3 = stmt(d, "SELECT x FROM t"_ss);
+    REQUIRE(s3.step() == result_t::row);
+    REQUIRE(s3.step() == result_t::done);
+  }
+
+  SECTION("immediate rollback")
+  {
+    auto d = db(":memory:");
+
+    auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+    REQUIRE(s1.step() == result_t::done);
+
+    auto t = transaction(d);
+
+    auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
+    REQUIRE(s2.step() == result_t::done);
+
+    const auto r = t.rollback_now();
+    REQUIRE(is_non_error(r));
+    REQUIRE(t.db_handle().c_ptr() == nullptr);
+
+    auto s3 = stmt(d, "SELECT x FROM t"_ss);
+    REQUIRE(s3.step() == result_t::done);
+  }
 }
