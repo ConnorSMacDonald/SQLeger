@@ -98,6 +98,8 @@ class db_ref : public db_interface<db_ref> {
 public:
   using interface_type = db_interface<db_ref>;
 
+  constexpr db_ref() noexcept = default;
+
   explicit constexpr db_ref(c_type* c_ptr) noexcept;
 
   explicit constexpr db_ref(db& other) noexcept;
