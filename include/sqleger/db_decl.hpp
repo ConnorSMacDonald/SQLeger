@@ -28,6 +28,8 @@ public:
 
   zstring_view errmsg() const noexcept;
 
+  constexpr operator bool() const noexcept;
+
 private:
   constexpr c_type* c_ptr() const noexcept;
 };

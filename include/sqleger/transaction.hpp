@@ -90,7 +90,7 @@ transaction::transaction(const db_ref db_handle, const transaction_t type) :
 
 transaction::~transaction() noexcept
 {
-  if (db_.c_ptr() == nullptr)
+  if (!db_)
     return;
 
   switch (outcome_)

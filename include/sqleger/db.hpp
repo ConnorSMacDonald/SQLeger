@@ -32,6 +32,12 @@ zstring_view db_interface<Impl>::errmsg() const noexcept
 }
 
 template <typename Impl>
+constexpr db_interface<Impl>::operator bool() const noexcept
+{
+  return c_ptr() != nullptr;
+}
+
+template <typename Impl>
 constexpr auto db_interface<Impl>::c_ptr() const noexcept -> c_type*
 {
   return static_cast<const impl_type*>(this)->c_ptr();

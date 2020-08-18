@@ -14,6 +14,39 @@ using namespace sqleger::zstring_view_literals;
 using namespace sqleger::string_span_literals;
 
 
+TEST_CASE("A stmt holds an sqlite3_stmt*", "[stmt]")
+{
+  SECTION("default constructor")
+  {
+    stmt s;
+    REQUIRE(s.c_ptr() == nullptr);
+    REQUIRE(!s);
+  }
+
+  SECTION("pointer constructor")
+  {
+    auto d = db(":memory:");
+
+    ::sqlite3_stmt* c_ptr1 {nullptr};
+    const auto r1 = int_to_enum<result_t>(::sqlite3_prepare_v2(
+      d.c_ptr(), "CREATE TABLE t(x INTEGER)", -1, &c_ptr1, nullptr));
+    REQUIRE(r1 == result_t::ok);
+    REQUIRE(c_ptr1 != nullptr);
+
+    stmt s {c_ptr1};
+    REQUIRE(s.c_ptr() == c_ptr1);
+    REQUIRE(s);
+
+    auto* const c_ptr2 = s.take_c_ptr();
+
+    REQUIRE(c_ptr2 == c_ptr1);
+    REQUIRE(!s);
+
+    const auto r2 = int_to_enum<result_t>(::sqlite3_finalize(c_ptr1));
+    REQUIRE(r2 == result_t::ok);
+  }
+}
+
 TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
 {
   SECTION("prepare v2, zstring")
@@ -26,13 +59,13 @@ TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
     const auto r1 = d.prepare_v2(q, s);
 
     REQUIRE(r1 == result_t::ok);
-    REQUIRE(s.c_ptr() != nullptr);
+    REQUIRE(s);
     REQUIRE(s.sql() == q);
 
     const auto r2 = s.finalize();
 
     REQUIRE(r2 == result_t::ok);
-    REQUIRE(s.c_ptr() == nullptr);
+    REQUIRE(!s);
   }
 
   SECTION("prepare v2, bounded string")
@@ -46,13 +79,13 @@ TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
     const auto r1 = d.prepare_v2(q2, s);
 
     REQUIRE(r1 == result_t::ok);
-    REQUIRE(s.c_ptr() != nullptr);
+    REQUIRE(s);
     REQUIRE(string_span(s.sql()) == q2);
 
     const auto r2 = s.finalize();
 
     REQUIRE(r2 == result_t::ok);
-    REQUIRE(s.c_ptr() == nullptr);
+    REQUIRE(!s);
   }
 
   SECTION("prepare v2, failure")
@@ -63,7 +96,7 @@ TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
     const auto r = d.prepare_v2("I'm not SQL!", s);
 
     REQUIRE(is_error(r));
-    REQUIRE(s.c_ptr() == nullptr);
+    REQUIRE(!s);
   }
 }
 
@@ -78,7 +111,7 @@ TEST_CASE("A stmt can be prepared through a constructor-exception interface",
 
     auto s = stmt(d, q.c_str());
 
-    REQUIRE(s.c_ptr() != nullptr);
+    REQUIRE(s);
     REQUIRE(s.sql() == q);
   }
 
@@ -91,7 +124,7 @@ TEST_CASE("A stmt can be prepared through a constructor-exception interface",
 
     auto s = stmt(d, q2);
 
-    REQUIRE(s.c_ptr() != nullptr);
+    REQUIRE(s);
     REQUIRE(string_span(s.sql()) == q2);
   }
 
@@ -110,18 +143,6 @@ TEST_CASE("A stmt can be prepared through a constructor-exception interface",
   }
 }
 
-TEST_CASE("A C handle can be taken from a stmt", "[stmt]")
-{
-  auto d = db(":memory:");
-  auto s = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-
-  const auto* const p1 = d.c_ptr();
-  const auto* const p2 = d.take_c_ptr();
-
-  REQUIRE(p1 == p2);
-  REQUIRE(d.c_ptr() == nullptr);
-}
-
 TEST_CASE("A stmt can be moved", "[stmt]")
 {
   SECTION("construction")
@@ -134,7 +155,7 @@ TEST_CASE("A stmt can be moved", "[stmt]")
     auto s2 = stmt(std::move(s1));
 
     REQUIRE(s2.c_ptr() == p);
-    REQUIRE(s1.c_ptr() == nullptr);
+    REQUIRE(!s1);
   }
 
   SECTION("assignment into null")
@@ -148,7 +169,7 @@ TEST_CASE("A stmt can be moved", "[stmt]")
     s2 = std::move(s1);
 
     REQUIRE(s2.c_ptr() == p);
-    REQUIRE(s1.c_ptr() == nullptr);
+    REQUIRE(!s1);
   }
 
   SECTION("assignment into prepared stmt")
@@ -162,7 +183,7 @@ TEST_CASE("A stmt can be moved", "[stmt]")
     s2 = std::move(s1);
 
     REQUIRE(s2.c_ptr() == p);
-    REQUIRE(s1.c_ptr() == nullptr);
+    REQUIRE(!s1);
   }
 }
 

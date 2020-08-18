@@ -55,8 +55,10 @@ public:
 
   zstring_view sql() const noexcept;
 
+  constexpr operator bool() const noexcept;
+
 private:
-  c_type* c_ptr() const noexcept;
+  constexpr c_type* c_ptr() const noexcept;
 };
 
 
@@ -205,7 +207,13 @@ zstring_view stmt_interface<Impl>::sql() const noexcept
 }
 
 template <typename Impl>
-auto stmt_interface<Impl>::c_ptr() const noexcept -> c_type*
+constexpr stmt_interface<Impl>::operator bool() const noexcept
+{
+  return c_ptr() != nullptr;
+}
+
+template <typename Impl>
+constexpr auto stmt_interface<Impl>::c_ptr() const noexcept -> c_type*
 {
   return static_cast<const impl_type*>(this)->c_ptr();
 }
