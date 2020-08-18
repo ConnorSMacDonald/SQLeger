@@ -9,6 +9,7 @@
 #include <sqleger/result_exception.hpp>
 #include <sqleger/stmt.hpp>
 #include <sqleger/string.hpp>
+#include <sqleger/transaction.hpp>
 #include <sqleger/user_blob.hpp>
 #include <sqleger/user_text.hpp>
 #include <sqleger/utility.hpp>
