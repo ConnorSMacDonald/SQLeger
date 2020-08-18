@@ -108,7 +108,7 @@ TEST_CASE("A db can be opened and closed", "[db]")
     REQUIRE(r1 == result_t::ok);
     REQUIRE(d);
 
-    ::sqlite3_stmt* s = nullptr;
+    ::sqlite3_stmt* s {nullptr};
     const auto r2 = int_to_enum<result_t>(::sqlite3_prepare_v2(
       d.c_ptr(), "CREATE TABLE t(x INTEGER)", -1, &s, nullptr));
 
