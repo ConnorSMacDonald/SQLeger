@@ -168,14 +168,12 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
   SECTION("open v1")
   {
     auto d = db(":memory:");
-
     REQUIRE(d);
   }
 
   SECTION("open v2")
   {
     auto d = db(":memory:", flags({open_t::readonly, open_t::nomutex}));
-
     REQUIRE(d);
   }
 
