@@ -187,6 +187,29 @@ TEST_CASE("A stmt can be moved", "[stmt]")
   }
 }
 
+TEST_CASE("A stmt ref can be constructed", "[stmt]")
+{
+  SECTION("from pointer")
+  {
+    auto d = db(":memory:");
+
+    auto s = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+    auto sr = stmt_ref(s.c_ptr());
+
+    REQUIRE(sr.c_ptr() == s.c_ptr());
+  }
+
+  SECTION("from stmt")
+  {
+    auto d = db(":memory:");
+
+    auto s = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+    auto sr = stmt_ref(s);
+
+    REQUIRE(sr.c_ptr() == s.c_ptr());
+  }
+}
+
 TEST_CASE("A stmt can be stepped", "[stmt]")
 {
   auto d = db(":memory:");

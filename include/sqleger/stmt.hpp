@@ -62,6 +62,9 @@ private:
 };
 
 
+class stmt_ref;
+
+
 class stmt : public stmt_interface<stmt> {
 
 public:
@@ -87,9 +90,31 @@ public:
 
   constexpr c_type* c_ptr() const noexcept { return c_ptr_; }
 
+  constexpr stmt_ref ref() noexcept;
+
+  constexpr operator stmt_ref() noexcept;
+
 private:
   inline result_t do_finalize() noexcept;
 
+  c_type* c_ptr_ = nullptr;
+};
+
+
+class stmt_ref : public stmt_interface<stmt_ref> {
+
+public:
+  using interface_type = stmt_interface<stmt_ref>;
+
+  constexpr stmt_ref() noexcept = default;
+
+  explicit constexpr stmt_ref(c_type* c_ptr) noexcept;
+
+  explicit constexpr stmt_ref(stmt& other) noexcept;
+
+  constexpr c_type* c_ptr() const noexcept { return c_ptr_; }
+
+private:
   c_type* c_ptr_ = nullptr;
 };
 
@@ -258,6 +283,20 @@ constexpr auto stmt::take_c_ptr() noexcept -> c_type*
 {
   return exchange_nullptr(c_ptr_);
 }
+
+constexpr stmt_ref stmt::ref() noexcept
+{
+  return stmt_ref(*this);
+}
+
+constexpr stmt::operator stmt_ref() noexcept
+{
+  return ref();
+}
+
+constexpr stmt_ref::stmt_ref(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
+
+constexpr stmt_ref::stmt_ref(stmt& other) noexcept : stmt_ref {other.c_ptr()} {}
 
 result_t stmt::do_finalize() noexcept
 {
