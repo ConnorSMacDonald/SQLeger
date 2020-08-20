@@ -278,7 +278,7 @@ TEST_CASE("Data can be bound to a stmt", "[stmt]")
   REQUIRE(r7 == result_t::done);
 }
 
-TEST_CASE("Column can be retrieved from a stmt", "[stmt]")
+TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
 {
   auto d = db(":memory:");
 
@@ -311,23 +311,23 @@ TEST_CASE("Column can be retrieved from a stmt", "[stmt]")
   const auto r1 = s3.step();
   REQUIRE(r1 == result_t::row);
 
-  const auto dt1 = s3.column_type(0);
-  REQUIRE(dt1 == datatype_t::blob);
+  const auto dt0 = s3.column_type(0);
+  REQUIRE(dt0 == datatype_t::blob);
 
-  const auto dt2 = s3.column_type(1);
-  REQUIRE(dt2 == datatype_t::_float);
+  const auto dt1 = s3.column_type(1);
+  REQUIRE(dt1 == datatype_t::_float);
 
-  const auto dt3 = s3.column_type(2);
+  const auto dt2 = s3.column_type(2);
+  REQUIRE(dt2 == datatype_t::integer);
+
+  const auto dt3 = s3.column_type(3);
   REQUIRE(dt3 == datatype_t::integer);
 
-  const auto dt4 = s3.column_type(3);
-  REQUIRE(dt4 == datatype_t::integer);
+  const auto dt4 = s3.column_type(4);
+  REQUIRE(dt4 == datatype_t::null);
 
-  const auto dt5 = s3.column_type(4);
-  REQUIRE(dt5 == datatype_t::null);
-
-  const auto dt6 = s3.column_type(5);
-  REQUIRE(dt6 == datatype_t::text);
+  const auto dt5 = s3.column_type(5);
+  REQUIRE(dt5 == datatype_t::text);
 
   const auto c0_sz = s3.column_bytes(0);
   REQUIRE(c0_sz == 40);
@@ -347,7 +347,7 @@ TEST_CASE("Column can be retrieved from a stmt", "[stmt]")
   REQUIRE(c2 == 2);
 
   const auto c3 = s3.column_int64(3);
-  REQUIRE(c3 == 3);
+  REQUIRE(c3 == int64(3));
 
   const auto c5_sz = s3.column_bytes(5);
   REQUIRE(c5_sz == ss.length());
