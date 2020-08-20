@@ -289,11 +289,12 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
                  "c INTEGER NOT NULL,"
                  "d INTEGER NOT NULL,"
                  "e INTEGER,"
-                 "f TEXT NOT NULL)"_ss);
+                 "f TEXT NOT NULL,"
+                 "g INTEGER)"_ss);
 
   REQUIRE(s1.step() == result_t::done);
 
-  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)"_ss);
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7)"_ss);
 
   const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
   constexpr auto ss = " vqlflz.tlue VPNRE103-====++++"_ss;
@@ -304,9 +305,10 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
   REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
   REQUIRE(s2.bind_null(5) == result_t::ok);
   REQUIRE(s2.bind_text(6, ss) == result_t::ok);
+  REQUIRE(s2.bind_null(7) == result_t::ok);
   REQUIRE(s2.step() == result_t::done);
 
-  auto s3 = stmt(d, "SELECT a, b, c, d, e, f FROM t"_ss);
+  auto s3 = stmt(d, "SELECT a, b, c, d, e, f, g FROM t"_ss);
 
   const auto r1 = s3.step();
   REQUIRE(r1 == result_t::row);
@@ -328,6 +330,9 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
 
   const auto dt5 = s3.column_type(5);
   REQUIRE(dt5 == datatype_t::text);
+
+  const auto dt6 = s3.column_type(6);
+  REQUIRE(dt6 == datatype_t::null);
 
   const auto c0_sz = s3.column_bytes(0);
   REQUIRE(c0_sz == 40);
@@ -355,6 +360,9 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
   const auto c5 = s3.column_text(5);
   const auto c5_ascii = utf8_to_ascii(c5);
   REQUIRE(string_span(c5_ascii) == ss);
+
+  auto c6 = s3.column_value(6);
+  REQUIRE(c6.type() == datatype_t::null);
 
   const auto r2 = s3.step();
   REQUIRE(r2 == result_t::done);

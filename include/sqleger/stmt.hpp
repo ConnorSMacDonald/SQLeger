@@ -7,6 +7,7 @@
 #include <sqleger/user_blob.hpp>
 #include <sqleger/user_text.hpp>
 #include <sqleger/utility.hpp>
+#include <sqleger/value.hpp>
 
 #include <sqlite3.h>
 
@@ -42,6 +43,8 @@ public:
   int64 column_int64(int index) noexcept;
 
   uzstring_view column_text(int index) noexcept;
+
+  value_ref column_value(int index) noexcept;
 
   int column_bytes(int index) noexcept;
 
@@ -193,6 +196,12 @@ template <typename Impl>
 uzstring_view stmt_interface<Impl>::column_text(const int index) noexcept
 {
   return ::sqlite3_column_text(c_ptr(), index);
+}
+
+template <typename Impl>
+value_ref stmt_interface<Impl>::column_value(const int index) noexcept
+{
+  return value_ref(::sqlite3_column_value(c_ptr(), index));
 }
 
 template <typename Impl>
