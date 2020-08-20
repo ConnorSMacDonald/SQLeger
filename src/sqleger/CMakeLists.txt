@@ -84,4 +84,8 @@ if (${SQLEGER_BUILD_TESTS})
   target_link_libraries(utility.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME utility.test COMMAND utility.test)
 
+  add_executable(value.test value.test.cpp)
+  target_link_libraries(value.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME value.test COMMAND value.test)
+
 endif()
