@@ -298,24 +298,19 @@ template <typename Traits, typename Allocator>
 std::basic_string<char, Traits, Allocator>
 utf8_to_ascii(const uzstring_view utf8, const Allocator& allocator)
 {
-  if constexpr (std::is_same_v<char, unsigned char>)
-    return utf8.to_std_string<Traits, Allocator>(utf8.c_str(), allocator);
-  else
-  {
-    using std_string_type = std::basic_string<char, Traits, Allocator>;
+  using std_string_type = std::basic_string<char, Traits, Allocator>;
 
-    const auto length
-      = static_cast<typename std_string_type::size_type>(zlength(utf8));
+  const auto length
+    = static_cast<typename std_string_type::size_type>(zlength(utf8));
 
-    auto ascii = std_string_type(length, '\0', allocator);
+  auto ascii = std_string_type(length, '\0', allocator);
 
-    std::transform(utf8.c_str(),
-                   utf8.c_str() + length,
-                   ascii.begin(),
-                   [](const unsigned char c) { return static_cast<char>(c); });
+  std::transform(utf8.c_str(),
+                 utf8.c_str() + length,
+                 ascii.begin(),
+                 [](const unsigned char c) { return static_cast<char>(c); });
 
-    return ascii;
-  }
+  return ascii;
 }
 
 inline namespace literals {
@@ -460,27 +455,21 @@ template <typename Traits, typename Allocator>
 std::basic_string<char, Traits, Allocator>
 utf8_to_ascii(const ustring_span utf8, const Allocator& allocator)
 {
-  if constexpr (std::is_same_v<char, unsigned char>)
-    return utf8.to_std_string<Traits, Allocator>(
-      utf8.data(), utf8.length(), allocator);
-  else
-  {
-    using std_string_type = std::basic_string<char, Traits, Allocator>;
+  using std_string_type = std::basic_string<char, Traits, Allocator>;
 
-    const auto real_length = static_cast<typename std_string_type::size_type>(
-      (utf8.length() == ustring_span::zstring_size)
-        ? zlength(uzstring_view(utf8.data()))
-        : utf8.length());
+  const auto real_length = static_cast<typename std_string_type::size_type>(
+    (utf8.length() == ustring_span::zstring_size)
+      ? zlength(uzstring_view(utf8.data()))
+      : utf8.length());
 
-    auto ascii = std_string_type(real_length, '\0', allocator);
+  auto ascii = std_string_type(real_length, '\0', allocator);
 
-    std::transform(utf8.data(),
-                   utf8.data() + real_length,
-                   ascii.begin(),
-                   [](const unsigned char c) { return static_cast<char>(c); });
+  std::transform(utf8.data(),
+                 utf8.data() + real_length,
+                 ascii.begin(),
+                 [](const unsigned char c) { return static_cast<char>(c); });
 
-    return ascii;
-  }
+  return ascii;
 }
 
 inline namespace literals {
