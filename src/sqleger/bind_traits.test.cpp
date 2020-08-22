@@ -1,8 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
+#include <sqleger/bind_traits.hpp>
 #include <sqleger/db.hpp>
-#include <sqleger/user_value_traits.hpp>
 
 
 using namespace sqleger;
@@ -11,7 +11,7 @@ using namespace sqleger::string_span_literals;
 
 TEST_CASE(
   "User value traits can be used to bind values through a universal interface",
-  "[user_value_traits]")
+  "[bind_traits]")
 {
   SECTION("blob")
   {
@@ -27,7 +27,7 @@ TEST_CASE(
     const std::vector<uint64_t> v1 = {1, 2, 3, 4, 5};
     const auto ub = user_blob(v1);
 
-    const auto r = user_value_traits<user_blob>::bind(p, ub);
+    const auto r = bind_traits<user_blob>::bind(p, ub);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);
@@ -58,9 +58,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto d1 = 0.5;
+    const auto double1 = 0.5;
 
-    const auto r = user_value_traits<double>::bind(p, d1);
+    const auto r = bind_traits<double>::bind(p, double1);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);
@@ -68,8 +68,8 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::row);
 
-    const auto i2 = s3.column_double(0);
-    REQUIRE(i2 == d1);
+    const auto double2 = s3.column_double(0);
+    REQUIRE(double2 == double1);
 
     REQUIRE(s3.step() == result_t::done);
   }
@@ -85,9 +85,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto i1 = 34;
+    const auto int1 = 34;
 
-    const auto r = user_value_traits<int>::bind(p, i1);
+    const auto r = bind_traits<int>::bind(p, int1);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);
@@ -95,8 +95,8 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::row);
 
-    const auto d2 = s3.column_int(0);
-    REQUIRE(d2 == i1);
+    const auto int2 = s3.column_int(0);
+    REQUIRE(int2 == int1);
 
     REQUIRE(s3.step() == result_t::done);
   }
@@ -112,9 +112,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto i1 = int64(34);
+    const auto int64_1 = int64(34);
 
-    const auto r = user_value_traits<int64>::bind(p, i1);
+    const auto r = bind_traits<int64>::bind(p, int64_1);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);
@@ -122,8 +122,8 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result_t::row);
 
-    const auto i2 = s3.column_int(0);
-    REQUIRE(i2 == i1);
+    const auto int64_2 = s3.column_int(0);
+    REQUIRE(int64_2 == int64_1);
 
     REQUIRE(s3.step() == result_t::done);
   }
@@ -141,7 +141,7 @@ TEST_CASE(
 
     const auto n = null();
 
-    const auto r = user_value_traits<null>::bind(p, n);
+    const auto r = bind_traits<null>::bind(p, n);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);
@@ -168,7 +168,7 @@ TEST_CASE(
 
     const auto ss = "sdga$GFA4QdQcwdf vdv QD D qs#3ertASGR3430"_ss;
 
-    const auto r = user_value_traits<user_text>::bind(p, ss);
+    const auto r = bind_traits<user_text>::bind(p, ss);
     REQUIRE(r == result_t::ok);
 
     REQUIRE(s2.step() == result_t::done);

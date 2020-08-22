@@ -47,6 +47,10 @@ if (${SQLEGER_BUILD_TESTS})
 
   include(CTest)
 
+  add_executable(bind_traits.test bind_traits.test.cpp)
+  target_link_libraries(bind_traits.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME bind_traits.test COMMAND bind_traits.test)
+
   add_executable(constants.test constants.test.cpp)
   target_link_libraries(constants.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME constants.test COMMAND constants.test)
@@ -83,10 +87,6 @@ if (${SQLEGER_BUILD_TESTS})
   add_executable(user_text.test user_text.test.cpp)
   target_link_libraries(user_text.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME user_text.test COMMAND user_text.test)
-
-  add_executable(user_value_traits.test user_value_traits.test.cpp)
-  target_link_libraries(user_value_traits.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
-  add_test(NAME user_value_traits.test COMMAND user_value_traits.test)
 
   add_executable(utility.test utility.test.cpp)
   target_link_libraries(utility.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
