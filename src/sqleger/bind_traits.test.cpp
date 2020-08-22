@@ -10,7 +10,7 @@ using namespace sqleger::string_span_literals;
 
 
 TEST_CASE(
-  "User value traits can be used to bind values through a universal interface",
+  "Bind traits can be used to bind values through a universal interface",
   "[bind_traits]")
 {
   SECTION("blob")
