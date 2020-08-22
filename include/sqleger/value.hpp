@@ -20,7 +20,7 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_value;
 
-  const void* blob() noexcept;
+  blob_data blob() noexcept;
 
   double _double() noexcept;
 
@@ -100,7 +100,7 @@ private:
 
 
 template <typename Impl>
-const void* value_interface<Impl>::blob() noexcept
+blob_data value_interface<Impl>::blob() noexcept
 {
   return ::sqlite3_value_blob(c_ptr());
 }

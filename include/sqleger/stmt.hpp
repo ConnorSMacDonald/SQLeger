@@ -1,6 +1,7 @@
 #ifndef SQLEGER_STMT_HPP
 #define SQLEGER_STMT_HPP
 
+#include <sqleger/blob_data.hpp>
 #include <sqleger/db_decl.hpp>
 #include <sqleger/int.hpp>
 #include <sqleger/result_exception.hpp>
@@ -34,7 +35,7 @@ public:
 
   result bind_text(int index, const user_text& text) noexcept;
 
-  const void* column_blob(int index) noexcept;
+  blob_data column_blob(int index) noexcept;
 
   double column_double(int index) noexcept;
 
@@ -168,7 +169,7 @@ result stmt_interface<Impl>::bind_text(const int index,
 }
 
 template <typename Impl>
-const void* stmt_interface<Impl>::column_blob(const int index) noexcept
+blob_data stmt_interface<Impl>::column_blob(const int index) noexcept
 {
   return ::sqlite3_column_blob(c_ptr(), index);
 }

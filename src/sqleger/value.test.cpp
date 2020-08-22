@@ -191,12 +191,8 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
   const auto c0_sz = v0.bytes();
   REQUIRE(c0_sz == 40);
 
-  const auto* const c0 = v0.blob();
-  const auto c0_vector = [&]() {
-    auto vector = std::vector<uint64_t>(5);
-    std::memcpy(reinterpret_cast<void*>(vector.data()), c0, c0_sz);
-    return vector;
-  }();
+  const auto c0 = v0.blob();
+  const auto c0_vector = c0.as_vector<uint64_t>(vector.size());
   REQUIRE(c0_vector == vector);
 
   const auto c1 = v1._double();

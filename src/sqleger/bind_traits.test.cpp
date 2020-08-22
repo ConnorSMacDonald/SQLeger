@@ -35,13 +35,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t");
     REQUIRE(s3.step() == result::row);
 
-    const auto v2 = [&]() {
-      auto v = std::vector<uint64_t>(5);
-      std::memcpy(reinterpret_cast<void*>(v.data()),
-                  s3.column_blob(0),
-                  s3.column_bytes(0));
-      return v;
-    }();
+    const auto v2 = s3.column_blob(0).as_vector<uint64_t>(v1.size());
     REQUIRE(v2 == v1);
 
     REQUIRE(s3.step() == result::done);

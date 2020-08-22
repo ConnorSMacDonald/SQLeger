@@ -337,12 +337,8 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
   const auto c0_sz = s3.column_bytes(0);
   REQUIRE(c0_sz == 40);
 
-  const auto* const c0 = s3.column_blob(0);
-  const auto c0_v = [&]() {
-    auto v = std::vector<uint64_t>(5);
-    std::memcpy(reinterpret_cast<void*>(v.data()), c0, c0_sz);
-    return v;
-  }();
+  const auto c0 = s3.column_blob(0);
+  const auto c0_v = c0.as_vector<uint64_t>(v.size());
   REQUIRE(c0_v == v);
 
   const auto c1 = s3.column_double(1);
