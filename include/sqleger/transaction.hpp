@@ -32,18 +32,18 @@ public:
 
   inline void rollback() noexcept;
 
-  inline result_t commit_now() noexcept;
+  inline result commit_now() noexcept;
 
-  inline result_t rollback_now() noexcept;
+  inline result rollback_now() noexcept;
 
   db_ref db_handle() const noexcept { return db_; }
 
 private:
   enum class outcome { commit, rollback };
 
-  inline result_t do_commit() noexcept;
+  inline result do_commit() noexcept;
 
-  inline result_t do_rollback() noexcept;
+  inline result do_rollback() noexcept;
 
   db_ref db_;
   outcome outcome_ = outcome::rollback;
@@ -59,7 +59,7 @@ transaction::transaction(const db_ref db_handle) : db_ {db_handle}
 
   auto begin_stmt = stmt(db_handle, "BEGIN TRANSACTION"_ss);
 
-  if (const auto r = begin_stmt.step(); r != result_t::done)
+  if (const auto r = begin_stmt.step(); r != result::done)
     throw result_exception(r);
 }
 
@@ -114,21 +114,21 @@ void transaction::rollback() noexcept
   outcome_ = outcome::rollback;
 }
 
-result_t transaction::commit_now() noexcept
+result transaction::commit_now() noexcept
 {
   const auto r = do_commit();
   db_ = db_ref();
   return r;
 }
 
-result_t transaction::rollback_now() noexcept
+result transaction::rollback_now() noexcept
 {
   const auto r = do_rollback();
   db_ = db_ref();
   return r;
 }
 
-result_t transaction::do_commit() noexcept
+result transaction::do_commit() noexcept
 {
   using namespace string_span_literals;
 
@@ -140,7 +140,7 @@ result_t transaction::do_commit() noexcept
   return s.step();
 }
 
-result_t transaction::do_rollback() noexcept
+result transaction::do_rollback() noexcept
 {
   using namespace string_span_literals;
 

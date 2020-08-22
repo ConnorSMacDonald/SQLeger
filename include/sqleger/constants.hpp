@@ -12,7 +12,7 @@
 namespace sqleger {
 
 
-enum class result_t {
+enum class result {
   // Primary result codes
   ok = SQLITE_OK,
   error = SQLITE_ERROR,
@@ -107,7 +107,7 @@ enum class result_t {
   warning_autoindex = SQLITE_WARNING_AUTOINDEX,
 };
 
-enum class open_t {
+enum class open {
   readonly = SQLITE_OPEN_READONLY,
   readwrite = SQLITE_OPEN_READWRITE,
   create = SQLITE_OPEN_CREATE,
@@ -131,7 +131,7 @@ enum class open_t {
   nofollow = SQLITE_OPEN_NOFOLLOW,
 };
 
-enum class datatype_t {
+enum class datatype {
   integer = SQLITE_INTEGER,
   _float = SQLITE_FLOAT,
   text = SQLITE3_TEXT,
@@ -149,13 +149,13 @@ constexpr Enum int_to_enum(std::underlying_type_t<Enum> value) noexcept;
 template <typename Enum>
 constexpr Enum flags(std::initializer_list<Enum> values = {}) noexcept;
 
-inline zstring_view errstr(result_t code) noexcept;
+inline zstring_view errstr(result code) noexcept;
 
-constexpr result_t primary_result(result_t code) noexcept;
+constexpr result primary_result(result code) noexcept;
 
-constexpr bool is_error(result_t code) noexcept;
+constexpr bool is_error(result code) noexcept;
 
-constexpr bool is_non_error(result_t code) noexcept;
+constexpr bool is_non_error(result code) noexcept;
 
 
 // =============================================================================
@@ -188,25 +188,25 @@ constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
   return static_cast<Enum>(result);
 }
 
-inline zstring_view errstr(const result_t code) noexcept
+inline zstring_view errstr(const result code) noexcept
 {
   return ::sqlite3_errstr(enum_to_int(code));
 }
 
-constexpr result_t primary_result(const result_t code) noexcept
+constexpr result primary_result(const result code) noexcept
 {
-  return static_cast<result_t>(static_cast<int>(code) & 0xFF);
+  return static_cast<result>(static_cast<int>(code) & 0xFF);
 }
 
-constexpr bool is_error(const result_t code) noexcept
+constexpr bool is_error(const result code) noexcept
 {
   const auto primary = primary_result(code);
 
-  return !(primary == result_t::ok || primary == result_t::row
-           || primary == result_t::done);
+  return !(primary == result::ok || primary == result::row
+           || primary == result::done);
 }
 
-constexpr bool is_non_error(const result_t code) noexcept
+constexpr bool is_non_error(const result code) noexcept
 {
   return !is_error(code);
 }

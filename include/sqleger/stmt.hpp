@@ -22,17 +22,17 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_stmt;
 
-  result_t bind_blob(int index, const user_blob& data) noexcept;
+  result bind_blob(int index, const user_blob& data) noexcept;
 
-  result_t bind_double(int index, double value) noexcept;
+  result bind_double(int index, double value) noexcept;
 
-  result_t bind_int(int index, int value) noexcept;
+  result bind_int(int index, int value) noexcept;
 
-  result_t bind_int64(int index, int64 value) noexcept;
+  result bind_int64(int index, int64 value) noexcept;
 
-  result_t bind_null(int index) noexcept;
+  result bind_null(int index) noexcept;
 
-  result_t bind_text(int index, const user_text& text) noexcept;
+  result bind_text(int index, const user_text& text) noexcept;
 
   const void* column_blob(int index) noexcept;
 
@@ -48,13 +48,13 @@ public:
 
   int column_bytes(int index) noexcept;
 
-  datatype_t column_type(int index) noexcept;
+  datatype column_type(int index) noexcept;
 
-  result_t step() noexcept;
+  result step() noexcept;
 
-  result_t reset() noexcept;
+  result reset() noexcept;
 
-  result_t clear_bindings() noexcept;
+  result clear_bindings() noexcept;
 
   zstring_view sql() const noexcept;
 
@@ -85,7 +85,7 @@ public:
 
   inline ~stmt() noexcept;
 
-  inline result_t finalize() noexcept;
+  inline result finalize() noexcept;
 
   constexpr c_type* take_c_ptr() noexcept;
 
@@ -98,7 +98,7 @@ public:
   constexpr operator stmt_ref() noexcept;
 
 private:
-  inline result_t do_finalize() noexcept;
+  inline result do_finalize() noexcept;
 
   c_type* c_ptr_ = nullptr;
 };
@@ -126,45 +126,44 @@ private:
 
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_blob(const int index,
-                                         const user_blob& data) noexcept
+result stmt_interface<Impl>::bind_blob(const int index,
+                                       const user_blob& data) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_blob(
+  return int_to_enum<result>(::sqlite3_bind_blob(
     c_ptr(), index, data.data(), data.size_bytes(), data.destructor()));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_double(const int index,
-                                           const double value) noexcept
+result stmt_interface<Impl>::bind_double(const int index,
+                                         const double value) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_double(c_ptr(), index, value));
+  return int_to_enum<result>(::sqlite3_bind_double(c_ptr(), index, value));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_int(const int index,
-                                        const int value) noexcept
+result stmt_interface<Impl>::bind_int(const int index, const int value) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_int(c_ptr(), index, value));
+  return int_to_enum<result>(::sqlite3_bind_int(c_ptr(), index, value));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_int64(const int index,
-                                          const int64 value) noexcept
+result stmt_interface<Impl>::bind_int64(const int index,
+                                        const int64 value) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_int64(c_ptr(), index, value));
+  return int_to_enum<result>(::sqlite3_bind_int64(c_ptr(), index, value));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_null(const int index) noexcept
+result stmt_interface<Impl>::bind_null(const int index) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_null(c_ptr(), index));
+  return int_to_enum<result>(::sqlite3_bind_null(c_ptr(), index));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::bind_text(const int index,
-                                         const user_text& text) noexcept
+result stmt_interface<Impl>::bind_text(const int index,
+                                       const user_text& text) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_bind_text(
+  return int_to_enum<result>(::sqlite3_bind_text(
     c_ptr(), index, text.data(), text.size_bytes(), text.destructor()));
 }
 
@@ -211,27 +210,27 @@ int stmt_interface<Impl>::column_bytes(const int index) noexcept
 }
 
 template <typename Impl>
-datatype_t stmt_interface<Impl>::column_type(const int index) noexcept
+datatype stmt_interface<Impl>::column_type(const int index) noexcept
 {
-  return int_to_enum<datatype_t>(::sqlite3_column_type(c_ptr(), index));
+  return int_to_enum<datatype>(::sqlite3_column_type(c_ptr(), index));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::step() noexcept
+result stmt_interface<Impl>::step() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_step(c_ptr()));
+  return int_to_enum<result>(::sqlite3_step(c_ptr()));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::reset() noexcept
+result stmt_interface<Impl>::reset() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_reset(c_ptr()));
+  return int_to_enum<result>(::sqlite3_reset(c_ptr()));
 }
 
 template <typename Impl>
-result_t stmt_interface<Impl>::clear_bindings() noexcept
+result stmt_interface<Impl>::clear_bindings() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_clear_bindings(c_ptr()));
+  return int_to_enum<result>(::sqlite3_clear_bindings(c_ptr()));
 }
 
 template <typename Impl>
@@ -279,7 +278,7 @@ stmt::~stmt() noexcept
   do_finalize();
 }
 
-result_t stmt::finalize() noexcept
+result stmt::finalize() noexcept
 {
   const auto r = do_finalize();
 
@@ -307,9 +306,9 @@ constexpr stmt_ref::stmt_ref(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
 
 constexpr stmt_ref::stmt_ref(stmt& other) noexcept : stmt_ref {other.c_ptr()} {}
 
-result_t stmt::do_finalize() noexcept
+result stmt::do_finalize() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_finalize(c_ptr_));
+  return int_to_enum<result>(::sqlite3_finalize(c_ptr_));
 }
 
 

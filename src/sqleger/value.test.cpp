@@ -24,10 +24,10 @@ TEST_CASE("A value holds an sqlite3_value*", "[value]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(2)");
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x FROM t");
 
@@ -54,10 +54,10 @@ TEST_CASE("A value can be freed", "[value]")
   auto d = db(":memory:");
 
   auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(2)");
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.step() == result::done);
 
   auto s3 = stmt(d, "SELECT x FROM t");
 
@@ -77,10 +77,10 @@ TEST_CASE("A value ref can be constructed", "[value]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(2)"_ss);
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
 
@@ -96,10 +96,10 @@ TEST_CASE("A value ref can be constructed", "[value]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(2)"_ss);
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
 
@@ -115,10 +115,10 @@ TEST_CASE("A value can be dupped", "[value]")
   auto d = db(":memory:");
 
   auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(2)"_ss);
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.step() == result::done);
 
   auto s3 = stmt(d, "SELECT x FROM t"_ss);
 
@@ -143,25 +143,25 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
                  "e INTEGER,"
                  "f TEXT NOT NULL)"_ss);
 
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)"_ss);
 
   const std::vector<uint64_t> vector = {1, 2, 3, 4, 5};
   constexpr auto ss = " vqlflz.tlue VPNRE103-====++++"_ss;
 
-  REQUIRE(s2.bind_blob(1, vector) == result_t::ok);
-  REQUIRE(s2.bind_double(2, 0.25) == result_t::ok);
-  REQUIRE(s2.bind_int(3, 2) == result_t::ok);
-  REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
-  REQUIRE(s2.bind_null(5) == result_t::ok);
-  REQUIRE(s2.bind_text(6, ss) == result_t::ok);
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.bind_blob(1, vector) == result::ok);
+  REQUIRE(s2.bind_double(2, 0.25) == result::ok);
+  REQUIRE(s2.bind_int(3, 2) == result::ok);
+  REQUIRE(s2.bind_int64(4, 3) == result::ok);
+  REQUIRE(s2.bind_null(5) == result::ok);
+  REQUIRE(s2.bind_text(6, ss) == result::ok);
+  REQUIRE(s2.step() == result::done);
 
   auto s3 = stmt(d, "SELECT a, b, c, d, e, f FROM t"_ss);
 
   const auto r1 = s3.step();
-  REQUIRE(r1 == result_t::row);
+  REQUIRE(r1 == result::row);
 
   auto v0 = value_ref(::sqlite3_column_value(s3.c_ptr(), 0));
   auto v1 = value_ref(::sqlite3_column_value(s3.c_ptr(), 1));
@@ -171,22 +171,22 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
   auto v5 = value_ref(::sqlite3_column_value(s3.c_ptr(), 5));
 
   const auto dt0 = v0.type();
-  REQUIRE(dt0 == datatype_t::blob);
+  REQUIRE(dt0 == datatype::blob);
 
   const auto dt1 = v1.type();
-  REQUIRE(dt1 == datatype_t::_float);
+  REQUIRE(dt1 == datatype::_float);
 
   const auto dt2 = v2.type();
-  REQUIRE(dt2 == datatype_t::integer);
+  REQUIRE(dt2 == datatype::integer);
 
   const auto dt3 = v3.type();
-  REQUIRE(dt3 == datatype_t::integer);
+  REQUIRE(dt3 == datatype::integer);
 
   const auto dt4 = v4.type();
-  REQUIRE(dt4 == datatype_t::null);
+  REQUIRE(dt4 == datatype::null);
 
   const auto dt5 = v5.type();
-  REQUIRE(dt5 == datatype_t::text);
+  REQUIRE(dt5 == datatype::text);
 
   const auto c0_sz = v0.bytes();
   REQUIRE(c0_sz == 40);
@@ -216,5 +216,5 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
   REQUIRE(string_span(c5_ascii) == ss);
 
   const auto r2 = s3.step();
-  REQUIRE(r2 == result_t::done);
+  REQUIRE(r2 == result::done);
 }

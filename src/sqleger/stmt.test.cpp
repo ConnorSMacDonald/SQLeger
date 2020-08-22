@@ -28,9 +28,9 @@ TEST_CASE("A stmt holds an sqlite3_stmt*", "[stmt]")
     auto d = db(":memory:");
 
     ::sqlite3_stmt* c_ptr1 {nullptr};
-    const auto r1 = int_to_enum<result_t>(::sqlite3_prepare_v2(
+    const auto r1 = int_to_enum<result>(::sqlite3_prepare_v2(
       d.c_ptr(), "CREATE TABLE t(x INTEGER)", -1, &c_ptr1, nullptr));
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(c_ptr1 != nullptr);
 
     stmt s {c_ptr1};
@@ -42,8 +42,8 @@ TEST_CASE("A stmt holds an sqlite3_stmt*", "[stmt]")
     REQUIRE(c_ptr2 == c_ptr1);
     REQUIRE(!s);
 
-    const auto r2 = int_to_enum<result_t>(::sqlite3_finalize(c_ptr1));
-    REQUIRE(r2 == result_t::ok);
+    const auto r2 = int_to_enum<result>(::sqlite3_finalize(c_ptr1));
+    REQUIRE(r2 == result::ok);
   }
 }
 
@@ -58,13 +58,13 @@ TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
     stmt s;
     const auto r1 = d.prepare_v2(q, s);
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(s);
     REQUIRE(s.sql() == q);
 
     const auto r2 = s.finalize();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!s);
   }
 
@@ -78,13 +78,13 @@ TEST_CASE("A stmt can be prepared and finalized", "[stmt]")
     stmt s;
     const auto r1 = d.prepare_v2(q2, s);
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(s);
     REQUIRE(string_span(s.sql()) == q2);
 
     const auto r2 = s.finalize();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!s);
   }
 
@@ -216,7 +216,7 @@ TEST_CASE("A stmt can be stepped", "[stmt]")
   auto s = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
 
   const auto r1 = s.step();
-  REQUIRE(r1 == result_t::done);
+  REQUIRE(r1 == result::done);
 
   const auto r2 = s.step();
   REQUIRE(is_error(r2));
@@ -228,13 +228,13 @@ TEST_CASE("A stmt can be reset", "[stmt]")
   auto s = stmt(d, "CREATE TABLE IF NOT EXISTS t(x INTEGER)"_ss);
 
   const auto r1 = s.step();
-  REQUIRE(r1 == result_t::done);
+  REQUIRE(r1 == result::done);
 
   const auto r2 = s.reset();
-  REQUIRE(r2 == result_t::ok);
+  REQUIRE(r2 == result::ok);
 
   const auto r3 = s.step();
-  REQUIRE(r3 == result_t::done);
+  REQUIRE(r3 == result::done);
 }
 
 TEST_CASE("Data can be bound to a stmt", "[stmt]")
@@ -250,32 +250,32 @@ TEST_CASE("Data can be bound to a stmt", "[stmt]")
                  "e INTEGER,"
                  "f TEXT NOT NULL)"_ss);
 
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)");
 
   const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
 
   const auto r1 = s2.bind_blob(1, v);
-  REQUIRE(r1 == result_t::ok);
+  REQUIRE(r1 == result::ok);
 
   const auto r2 = s2.bind_double(2, 0.25);
-  REQUIRE(r2 == result_t::ok);
+  REQUIRE(r2 == result::ok);
 
   const auto r3 = s2.bind_int(3, 2);
-  REQUIRE(r3 == result_t::ok);
+  REQUIRE(r3 == result::ok);
 
   const auto r4 = s2.bind_int64(4, 3);
-  REQUIRE(r4 == result_t::ok);
+  REQUIRE(r4 == result::ok);
 
   const auto r5 = s2.bind_null(5);
-  REQUIRE(r5 == result_t::ok);
+  REQUIRE(r5 == result::ok);
 
   const auto r6 = s2.bind_text(6, {"aal;sdfkjjk aAAV NFLS4E352"});
-  REQUIRE(r6 == result_t::ok);
+  REQUIRE(r6 == result::ok);
 
   const auto r7 = s2.step();
-  REQUIRE(r7 == result_t::done);
+  REQUIRE(r7 == result::done);
 }
 
 TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
@@ -292,47 +292,47 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
                  "f TEXT NOT NULL,"
                  "g INTEGER)"_ss);
 
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6, ?7)"_ss);
 
   const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
   constexpr auto ss = " vqlflz.tlue VPNRE103-====++++"_ss;
 
-  REQUIRE(s2.bind_blob(1, v) == result_t::ok);
-  REQUIRE(s2.bind_double(2, 0.25) == result_t::ok);
-  REQUIRE(s2.bind_int(3, 2) == result_t::ok);
-  REQUIRE(s2.bind_int64(4, 3) == result_t::ok);
-  REQUIRE(s2.bind_null(5) == result_t::ok);
-  REQUIRE(s2.bind_text(6, ss) == result_t::ok);
-  REQUIRE(s2.bind_null(7) == result_t::ok);
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.bind_blob(1, v) == result::ok);
+  REQUIRE(s2.bind_double(2, 0.25) == result::ok);
+  REQUIRE(s2.bind_int(3, 2) == result::ok);
+  REQUIRE(s2.bind_int64(4, 3) == result::ok);
+  REQUIRE(s2.bind_null(5) == result::ok);
+  REQUIRE(s2.bind_text(6, ss) == result::ok);
+  REQUIRE(s2.bind_null(7) == result::ok);
+  REQUIRE(s2.step() == result::done);
 
   auto s3 = stmt(d, "SELECT a, b, c, d, e, f, g FROM t"_ss);
 
   const auto r1 = s3.step();
-  REQUIRE(r1 == result_t::row);
+  REQUIRE(r1 == result::row);
 
   const auto dt0 = s3.column_type(0);
-  REQUIRE(dt0 == datatype_t::blob);
+  REQUIRE(dt0 == datatype::blob);
 
   const auto dt1 = s3.column_type(1);
-  REQUIRE(dt1 == datatype_t::_float);
+  REQUIRE(dt1 == datatype::_float);
 
   const auto dt2 = s3.column_type(2);
-  REQUIRE(dt2 == datatype_t::integer);
+  REQUIRE(dt2 == datatype::integer);
 
   const auto dt3 = s3.column_type(3);
-  REQUIRE(dt3 == datatype_t::integer);
+  REQUIRE(dt3 == datatype::integer);
 
   const auto dt4 = s3.column_type(4);
-  REQUIRE(dt4 == datatype_t::null);
+  REQUIRE(dt4 == datatype::null);
 
   const auto dt5 = s3.column_type(5);
-  REQUIRE(dt5 == datatype_t::text);
+  REQUIRE(dt5 == datatype::text);
 
   const auto dt6 = s3.column_type(6);
-  REQUIRE(dt6 == datatype_t::null);
+  REQUIRE(dt6 == datatype::null);
 
   const auto c0_sz = s3.column_bytes(0);
   REQUIRE(c0_sz == 40);
@@ -362,10 +362,10 @@ TEST_CASE("Result values can be retrieved from a stmt", "[stmt]")
   REQUIRE(string_span(c5_ascii) == ss);
 
   auto c6 = s3.column_value(6);
-  REQUIRE(c6.type() == datatype_t::null);
+  REQUIRE(c6.type() == datatype::null);
 
   const auto r2 = s3.step();
-  REQUIRE(r2 == result_t::done);
+  REQUIRE(r2 == result::done);
 }
 
 TEST_CASE("Bindings can be cleared on a stmt", "[stmt]")
@@ -374,11 +374,11 @@ TEST_CASE("Bindings can be cleared on a stmt", "[stmt]")
 
   auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
 
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
-  REQUIRE(s2.bind_int(1, 7) == result_t::ok);
+  REQUIRE(s2.bind_int(1, 7) == result::ok);
 
   const auto r1 = s2.clear_bindings();
   REQUIRE(is_non_error(r1));

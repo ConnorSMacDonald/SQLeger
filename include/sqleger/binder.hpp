@@ -11,7 +11,7 @@ namespace sqleger {
 
 
 struct bind_result {
-  result_t code;
+  result code;
   int index;
 };
 
@@ -28,7 +28,7 @@ public:
 
   int index() const noexcept { return index_; }
 
-  result_t code() const noexcept { return code_; }
+  result code() const noexcept { return code_; }
 
 private:
   template <std::size_t I, typename... UserValues>
@@ -36,7 +36,7 @@ private:
 
   stmt_ref stmt_ref_;
 
-  result_t code_ = result_t::ok;
+  result code_ = result::ok;
   int index_ = 0;
 };
 

@@ -12,11 +12,10 @@ namespace sqleger {
 
 
 template <typename Impl>
-result_t db_interface<Impl>::prepare_v2(const string_span sql,
-                                        stmt& result) noexcept
+result db_interface<Impl>::prepare_v2(const string_span sql, stmt& s) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_prepare_v2(
-    c_ptr(), sql.data(), sql.size(), result.c_ptr_out(), nullptr));
+  return int_to_enum<result>(::sqlite3_prepare_v2(
+    c_ptr(), sql.data(), sql.size(), s.c_ptr_out(), nullptr));
 }
 
 template <typename Impl>
@@ -43,18 +42,16 @@ constexpr auto db_interface<Impl>::c_ptr() const noexcept -> c_type*
   return static_cast<const impl_type*>(this)->c_ptr();
 }
 
-result_t db::open(const zstring_view filename, db& result) noexcept
+result db::open(const zstring_view filename, db& d) noexcept
 {
-  return int_to_enum<result_t>(
-    ::sqlite3_open(filename.c_str(), &result.c_ptr_));
+  return int_to_enum<result>(::sqlite3_open(filename.c_str(), &d.c_ptr_));
 }
 
-result_t db::open_v2(const zstring_view filename,
-                     db& result,
-                     const open_t flags) noexcept
+result
+db::open_v2(const zstring_view filename, db& d, const enum open flags) noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_open_v2(
-    filename.c_str(), &result.c_ptr_, enum_to_int(flags), nullptr));
+  return int_to_enum<result>(::sqlite3_open_v2(
+    filename.c_str(), &d.c_ptr_, enum_to_int(flags), nullptr));
 }
 
 db::db(const zstring_view filename)
@@ -63,7 +60,7 @@ db::db(const zstring_view filename)
     throw open_exception(r, std::move(*this));
 }
 
-db::db(const zstring_view filename, const open_t flags)
+db::db(const zstring_view filename, const enum open flags)
 {
   if (const auto r = open_v2(filename, *this, flags); is_error(r))
     throw open_exception(r, std::move(*this));
@@ -90,17 +87,17 @@ db::~db() noexcept
   do_close_v2();
 }
 
-result_t db::close() noexcept
+result db::close() noexcept
 {
-  const auto r = int_to_enum<result_t>(::sqlite3_close(c_ptr_));
+  const auto r = int_to_enum<result>(::sqlite3_close(c_ptr_));
 
-  if (r == result_t::ok)
+  if (r == result::ok)
     c_ptr_ = nullptr;
 
   return r;
 }
 
-result_t db::close_v2() noexcept
+result db::close_v2() noexcept
 {
   const auto r = do_close_v2();
 
@@ -124,12 +121,12 @@ constexpr db::operator db_ref() noexcept
   return ref();
 }
 
-result_t db::do_close_v2() noexcept
+result db::do_close_v2() noexcept
 {
-  return int_to_enum<result_t>(::sqlite3_close_v2(c_ptr_));
+  return int_to_enum<result>(::sqlite3_close_v2(c_ptr_));
 }
 
-open_exception::open_exception(const result_t code, db&& db_handle) noexcept :
+open_exception::open_exception(const result code, db&& db_handle) noexcept :
   result_exception {code},
   db_ {std::move(db_handle)}
 {

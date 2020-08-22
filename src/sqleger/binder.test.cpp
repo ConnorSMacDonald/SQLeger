@@ -16,7 +16,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
@@ -26,18 +26,18 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto [r, idx] = b(int1);
 
-    REQUIRE(r == result_t::ok);
+    REQUIRE(r == result::ok);
     REQUIRE(idx == 1);
 
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
-    REQUIRE(s3.step() == result_t::row);
+    REQUIRE(s3.step() == result::row);
 
     const auto int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
-    REQUIRE(s3.step() == result_t::done);
+    REQUIRE(s3.step() == result::done);
   }
 
   SECTION("multiple values")
@@ -46,7 +46,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto s1 = stmt(
       d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL, z INTEGER)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3)"_ss);
 
@@ -58,13 +58,13 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto [r, idx] = b(int1, double1, n);
 
-    REQUIRE(r == result_t::ok);
+    REQUIRE(r == result::ok);
     REQUIRE(idx == 3);
 
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
-    REQUIRE(s3.step() == result_t::row);
+    REQUIRE(s3.step() == result::row);
 
     const auto int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
@@ -73,9 +73,9 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     REQUIRE(double2 == double1);
 
     const auto dt = s3.column_type(2);
-    REQUIRE(dt == datatype_t::null);
+    REQUIRE(dt == datatype::null);
 
-    REQUIRE(s3.step() == result_t::done);
+    REQUIRE(s3.step() == result::done);
   }
 
   SECTION("void")
@@ -83,7 +83,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
@@ -91,7 +91,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto [r, idx] = b();
 
-    REQUIRE(r == result_t::ok);
+    REQUIRE(r == result::ok);
     REQUIRE(idx == 0);
 
     REQUIRE(is_error(s2.step()));
@@ -107,7 +107,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto [r, idx] = b(null());
 
-    REQUIRE(r == result_t::range);
+    REQUIRE(r == result::range);
     REQUIRE(idx == 1);
   }
 
@@ -116,7 +116,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
 
@@ -128,7 +128,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto [r, idx] = b(int1, double1, n);
 
-    REQUIRE(r == result_t::range);
+    REQUIRE(r == result::range);
     REQUIRE(idx == 3);
   }
 }
@@ -141,7 +141,7 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
     auto d = db(":memory:");
 
     auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
@@ -151,18 +151,18 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     b << int1;
 
-    REQUIRE(b.code() == result_t::ok);
+    REQUIRE(b.code() == result::ok);
     REQUIRE(b.index() == 1);
 
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
-    REQUIRE(s3.step() == result_t::row);
+    REQUIRE(s3.step() == result::row);
 
     const auto int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
-    REQUIRE(s3.step() == result_t::done);
+    REQUIRE(s3.step() == result::done);
   }
 
   SECTION("multiple values")
@@ -171,7 +171,7 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     auto s1 = stmt(
       d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL, z INTEGER)"_ss);
-    REQUIRE(s1.step() == result_t::done);
+    REQUIRE(s1.step() == result::done);
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3)"_ss);
 
@@ -183,13 +183,13 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     b << int1 << double1 << n;
 
-    REQUIRE(b.code() == result_t::ok);
+    REQUIRE(b.code() == result::ok);
     REQUIRE(b.index() == 3);
 
-    REQUIRE(s2.step() == result_t::done);
+    REQUIRE(s2.step() == result::done);
 
     auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
-    REQUIRE(s3.step() == result_t::row);
+    REQUIRE(s3.step() == result::row);
 
     const auto int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
@@ -198,9 +198,9 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
     REQUIRE(double2 == double1);
 
     const auto dt = s3.column_type(2);
-    REQUIRE(dt == datatype_t::null);
+    REQUIRE(dt == datatype::null);
 
-    REQUIRE(s3.step() == result_t::done);
+    REQUIRE(s3.step() == result::done);
   }
 }
 
@@ -211,7 +211,7 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
 
   auto s1 = stmt(
     d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL, z INTEGER)"_ss);
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3)"_ss);
 
@@ -221,13 +221,13 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
 
   const auto [r, idx] = bind(s2, int1, double1, n);
 
-  REQUIRE(r == result_t::ok);
+  REQUIRE(r == result::ok);
   REQUIRE(idx == 3);
 
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.step() == result::done);
 
   auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
-  REQUIRE(s3.step() == result_t::row);
+  REQUIRE(s3.step() == result::row);
 
   const auto int2 = s3.column_int(0);
   REQUIRE(int2 == int1);
@@ -236,7 +236,7 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
   REQUIRE(double2 == double1);
 
   const auto dt = s3.column_type(2);
-  REQUIRE(dt == datatype_t::null);
+  REQUIRE(dt == datatype::null);
 
-  REQUIRE(s3.step() == result_t::done);
+  REQUIRE(s3.step() == result::done);
 }

@@ -32,7 +32,7 @@ public:
 
   int bytes() noexcept;
 
-  datatype_t type() noexcept;
+  datatype type() noexcept;
 
   value dup() const noexcept;
 
@@ -136,9 +136,9 @@ int value_interface<Impl>::bytes() noexcept
 }
 
 template <typename Impl>
-datatype_t value_interface<Impl>::type() noexcept
+datatype value_interface<Impl>::type() noexcept
 {
-  return int_to_enum<datatype_t>(::sqlite3_value_type(c_ptr()));
+  return int_to_enum<datatype>(::sqlite3_value_type(c_ptr()));
 }
 
 template <typename Impl>

@@ -22,7 +22,7 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3;
 
-  result_t prepare_v2(string_span sql, stmt& result) noexcept;
+  result prepare_v2(string_span sql, stmt& s) noexcept;
 
   int64 last_insert_rowid() noexcept;
 
@@ -43,16 +43,16 @@ class db : public db_interface<db> {
 public:
   using interface_type = db_interface<db>;
 
-  static inline result_t open(zstring_view filename, db& result) noexcept;
+  static inline result open(zstring_view filename, db& d) noexcept;
 
-  static inline result_t
-  open_v2(zstring_view filename, db& result, open_t flags) noexcept;
+  static inline result
+  open_v2(zstring_view filename, db& d, enum open flags) noexcept;
 
   constexpr db() noexcept = default;
 
   inline db(zstring_view filename);
 
-  inline db(zstring_view filename, open_t flags);
+  inline db(zstring_view filename, enum open flags);
 
   explicit constexpr db(c_type* c_ptr) noexcept;
 
@@ -62,9 +62,9 @@ public:
 
   inline ~db() noexcept;
 
-  inline result_t close() noexcept;
+  inline result close() noexcept;
 
-  inline result_t close_v2() noexcept;
+  inline result close_v2() noexcept;
 
   constexpr c_type* take_c_ptr() noexcept;
 
@@ -75,7 +75,7 @@ public:
   constexpr operator db_ref() noexcept;
 
 private:
-  inline result_t do_close_v2() noexcept;
+  inline result do_close_v2() noexcept;
 
   c_type* c_ptr_ = nullptr;
 };
@@ -84,7 +84,7 @@ private:
 class open_exception : public result_exception {
 
 public:
-  inline open_exception(result_t code, db&& db_handle) noexcept;
+  inline open_exception(result code, db&& db_handle) noexcept;
 
   open_exception(open_exception&& other) noexcept = default;
 

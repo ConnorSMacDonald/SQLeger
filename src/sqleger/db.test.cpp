@@ -22,8 +22,8 @@ TEST_CASE("A db holds an sqlite3*", "[db]")
   SECTION("pointer constructor")
   {
     ::sqlite3* c_ptr1 {nullptr};
-    const auto r1 = int_to_enum<result_t>(::sqlite3_open(":memory:", &c_ptr1));
-    REQUIRE(r1 == result_t::ok);
+    const auto r1 = int_to_enum<result>(::sqlite3_open(":memory:", &c_ptr1));
+    REQUIRE(r1 == result::ok);
     REQUIRE(c_ptr1 != nullptr);
 
     auto d = db(c_ptr1);
@@ -35,8 +35,8 @@ TEST_CASE("A db holds an sqlite3*", "[db]")
     REQUIRE(c_ptr2 == c_ptr1);
     REQUIRE(!d);
 
-    const auto r2 = int_to_enum<result_t>(::sqlite3_close(c_ptr1));
-    REQUIRE(r2 == result_t::ok);
+    const auto r2 = int_to_enum<result>(::sqlite3_close(c_ptr1));
+    REQUIRE(r2 == result::ok);
   }
 }
 
@@ -47,12 +47,12 @@ TEST_CASE("A db can be opened and closed", "[db]")
     db d;
     const auto r1 = db::open(":memory:", d);
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(d);
 
     const auto r2 = d.close();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!d);
   }
 
@@ -61,12 +61,12 @@ TEST_CASE("A db can be opened and closed", "[db]")
     db d;
     const auto r1 = db::open(":memory:", d);
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(d);
 
     const auto r2 = d.close_v2();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!d);
   }
 
@@ -74,14 +74,14 @@ TEST_CASE("A db can be opened and closed", "[db]")
   {
     db d;
     const auto r1
-      = db::open_v2(":memory:", d, flags({open_t::readonly, open_t::nomutex}));
+      = db::open_v2(":memory:", d, flags({open::readonly, open::nomutex}));
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(d);
 
     const auto r2 = d.close();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!d);
   }
 
@@ -89,14 +89,14 @@ TEST_CASE("A db can be opened and closed", "[db]")
   {
     db d;
     const auto r1
-      = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open_t::readonly);
+      = db::open_v2("a-db-THATdoeSn0t__exist.bad", d, open::readonly);
 
-    REQUIRE(r1 != result_t::ok);
+    REQUIRE(r1 != result::ok);
     REQUIRE(d);
 
     const auto r2 = d.close();
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
     REQUIRE(!d);
   }
 
@@ -105,27 +105,27 @@ TEST_CASE("A db can be opened and closed", "[db]")
     db d;
     const auto r1 = db::open(":memory:", d);
 
-    REQUIRE(r1 == result_t::ok);
+    REQUIRE(r1 == result::ok);
     REQUIRE(d);
 
     ::sqlite3_stmt* s {nullptr};
-    const auto r2 = int_to_enum<result_t>(::sqlite3_prepare_v2(
+    const auto r2 = int_to_enum<result>(::sqlite3_prepare_v2(
       d.c_ptr(), "CREATE TABLE t(x INTEGER)", -1, &s, nullptr));
 
-    REQUIRE(r2 == result_t::ok);
+    REQUIRE(r2 == result::ok);
 
     const auto r3 = d.close();
 
-    REQUIRE(r3 == result_t::busy);
+    REQUIRE(r3 == result::busy);
     REQUIRE(d);
 
-    const auto r4 = int_to_enum<result_t>(::sqlite3_finalize(s));
+    const auto r4 = int_to_enum<result>(::sqlite3_finalize(s));
 
-    REQUIRE(r4 == result_t::ok);
+    REQUIRE(r4 == result::ok);
 
     const auto r5 = d.close();
 
-    REQUIRE(r5 == result_t::ok);
+    REQUIRE(r5 == result::ok);
     REQUIRE(!d);
   }
 }
@@ -135,7 +135,7 @@ TEST_CASE("An error message can be retrieved from a db interface", "[db]")
   db d;
   const auto r1 = db::open("/", d);
 
-  REQUIRE(r1 != result_t::ok);
+  REQUIRE(r1 != result::ok);
 
   const auto zv = d.errmsg();
 
@@ -147,7 +147,7 @@ TEST_CASE("An open exception can be thrown and caught", "[db]")
   db d;
   const auto r = db::open("/", d);
 
-  REQUIRE(r != result_t::ok);
+  REQUIRE(r != result::ok);
 
   const auto msg = static_cast<std::string>(d.errmsg());
 
@@ -173,7 +173,7 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
 
   SECTION("open v2")
   {
-    auto d = db(":memory:", flags({open_t::readonly, open_t::nomutex}));
+    auto d = db(":memory:", flags({open::readonly, open::nomutex}));
     REQUIRE(d);
   }
 
@@ -185,7 +185,7 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
     }
     catch (const open_exception& e)
     {
-      REQUIRE(e.code() == result_t::cantopen);
+      REQUIRE(e.code() == result::cantopen);
       REQUIRE(e.what() == "unable to open database file"sv);
     }
   }
@@ -194,11 +194,11 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
   {
     try
     {
-      auto d = db("/", open_t::readwrite);
+      auto d = db("/", open::readwrite);
     }
     catch (const open_exception& e)
     {
-      REQUIRE(e.code() == result_t::cantopen);
+      REQUIRE(e.code() == result::cantopen);
       REQUIRE(e.what() == "unable to open database file"sv);
     }
   }
@@ -272,10 +272,10 @@ TEST_CASE("The last insert rowid can be retrieved from a db", "[db]")
   REQUIRE(ri1 == 0);
 
   auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
-  REQUIRE(s1.step() == result_t::done);
+  REQUIRE(s1.step() == result::done);
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
-  REQUIRE(s2.step() == result_t::done);
+  REQUIRE(s2.step() == result::done);
 
   const auto ri2 = d.last_insert_rowid();
   REQUIRE(ri2 == 1);
