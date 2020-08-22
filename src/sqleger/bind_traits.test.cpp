@@ -139,9 +139,7 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto n = null();
-
-    const auto r = bind_traits<null>::bind(p, n);
+    const auto r = bind_traits<null_t>::bind(p, null);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);

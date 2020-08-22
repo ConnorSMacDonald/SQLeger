@@ -54,9 +54,8 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto int1 = 39;
     const auto double1 = 0.125;
-    const auto n = null();
 
-    const auto [r, idx] = b(int1, double1, n);
+    const auto [r, idx] = b(int1, double1, null);
 
     REQUIRE(r == result::ok);
     REQUIRE(idx == 3);
@@ -105,7 +104,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s);
 
-    const auto [r, idx] = b(null());
+    const auto [r, idx] = b(null);
 
     REQUIRE(r == result::range);
     REQUIRE(idx == 1);
@@ -124,9 +123,8 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     const auto int1 = 39;
     const auto double1 = 0.125;
-    const auto n = null();
 
-    const auto [r, idx] = b(int1, double1, n);
+    const auto [r, idx] = b(int1, double1, null);
 
     REQUIRE(r == result::range);
     REQUIRE(idx == 3);
@@ -179,9 +177,8 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     const auto int1 = 39;
     const auto double1 = 0.125;
-    const auto n = null();
 
-    b << int1 << double1 << n;
+    b << int1 << double1 << null;
 
     REQUIRE(b.code() == result::ok);
     REQUIRE(b.index() == 3);
@@ -217,9 +214,8 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
 
   const auto int1 = 39;
   const auto double1 = 0.125;
-  const auto n = null();
 
-  const auto [r, idx] = bind(s2, int1, double1, n);
+  const auto [r, idx] = bind(s2, int1, double1, null);
 
   REQUIRE(r == result::ok);
   REQUIRE(idx == 3);

@@ -7,8 +7,10 @@
 namespace sqleger {
 
 
-struct null {
+struct null_t {
 };
+
+static constexpr null_t null {};
 
 
 template <typename T>
@@ -36,8 +38,8 @@ struct bind_traits<int64> {
 };
 
 template <>
-struct bind_traits<null> {
-  static inline result bind(parameter& p, null) noexcept;
+struct bind_traits<null_t> {
+  static inline result bind(parameter& p, null_t) noexcept;
 };
 
 template <>
@@ -70,7 +72,7 @@ result bind_traits<int64>::bind(parameter& p, const int64 value) noexcept
   return p.bind_int64(value);
 }
 
-result bind_traits<null>::bind(parameter& p, null) noexcept
+result bind_traits<null_t>::bind(parameter& p, null_t) noexcept
 {
   return p.bind_null();
 }
