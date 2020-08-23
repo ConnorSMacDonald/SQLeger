@@ -63,6 +63,10 @@ if (${SQLEGER_BUILD_TESTS})
   target_link_libraries(column_traits.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME column_traits.test COMMAND column_traits.test)
 
+  add_executable(columner.test columner.test.cpp)
+  target_link_libraries(columner.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+  add_test(NAME columner.test COMMAND columner.test)
+
   add_executable(constants.test constants.test.cpp)
   target_link_libraries(constants.test PRIVATE ${PROJECT_NAME} Catch2::Catch2)
   add_test(NAME constants.test COMMAND constants.test)
