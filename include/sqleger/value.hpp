@@ -1,8 +1,11 @@
 #ifndef SQLEGER_VALUE_HPP
 #define SQLEGER_VALUE_HPP
 
+#include <sqleger/blob_data.hpp>
+#include <sqleger/constants.hpp>
 #include <sqleger/int.hpp>
 #include <sqleger/string.hpp>
+#include <sqleger/utility.hpp>
 
 #include <sqlite3.h>
 
