@@ -22,8 +22,8 @@ public:
   basic_user_blob(const std::array<T, N>& data,
                   destructor_type destructor = transient) noexcept;
 
-  template <typename T>
-  basic_user_blob(const std::vector<T>& data,
+  template <typename T, typename Allocator>
+  basic_user_blob(const std::vector<T, Allocator>& data,
                   destructor_type destructor = transient) noexcept;
 
   template <typename ContiguousItr>
@@ -66,9 +66,9 @@ basic_user_blob<Size>::basic_user_blob(
 }
 
 template <typename Size>
-template <typename T>
+template <typename T, typename Allocator>
 basic_user_blob<Size>::basic_user_blob(
-  const std::vector<T>& data,
+  const std::vector<T, Allocator>& data,
   const destructor_type destructor) noexcept :
   data_ {reinterpret_cast<const void*>(data.data())},
   size_bytes_ {static_cast<size_type>(data.size() * sizeof(T))},
