@@ -8,7 +8,7 @@
 namespace sqleger {
 
 
-enum class transaction_kind {
+enum class transaction_behavior {
   deferred,
   immediate,
   exclusive,
@@ -20,7 +20,7 @@ class transaction {
 public:
   inline transaction(db_ref db_handle);
 
-  inline transaction(db_ref db_handle, transaction_kind type);
+  inline transaction(db_ref db_handle, transaction_behavior behavior);
 
   transaction(transaction&& other) noexcept = default;
 
@@ -63,26 +63,27 @@ transaction::transaction(const db_ref db_handle) : db_ {db_handle}
     throw result_exception(r);
 }
 
-transaction::transaction(const db_ref db_handle, const transaction_kind type) :
+transaction::transaction(const db_ref db_handle,
+                         const transaction_behavior behavior) :
   db_ {db_handle}
 {
   using namespace std::string_literals;
 
-  const auto type_string = [&]() {
-    switch (type)
+  const auto behavior_string = [&]() {
+    switch (behavior)
     {
-      case transaction_kind::deferred:
+      case transaction_behavior::deferred:
         return "DEFERRED"s;
-      case transaction_kind::exclusive:
+      case transaction_behavior::exclusive:
         return "EXCLUSIVE"s;
-      case transaction_kind::immediate:
+      case transaction_behavior::immediate:
         return "IMMEDIATE"s;
     }
 
     return ""s;
   }();
 
-  auto begin_stmt = stmt(db_, "BEGIN "s + type_string + " TRANSACTION"s);
+  auto begin_stmt = stmt(db_, "BEGIN "s + behavior_string + " TRANSACTION"s);
 
   if (const auto r = begin_stmt.step(); is_error(r))
     throw result_exception(r);
