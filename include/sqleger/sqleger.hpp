@@ -7,6 +7,7 @@
 #include <sqleger/binder.hpp>
 #include <sqleger/blob_data.hpp>
 #include <sqleger/column_traits.hpp>
+#include <sqleger/columner.hpp>
 #include <sqleger/constants.hpp>
 #include <sqleger/destructor.hpp>
 #include <sqleger/int.hpp>
