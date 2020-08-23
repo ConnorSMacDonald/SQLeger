@@ -22,13 +22,13 @@ public:
             typename = std::enable_if_t<sizeof...(ResultValues) != 1>>
   std::tuple<ResultValues...> get() noexcept;
 
-  stmt_ref get_stmt_ref() const noexcept { return stmt_ref_; }
+  constexpr stmt_ref get_stmt_ref() const noexcept { return stmt_ref_; }
 
-  int index() const noexcept { return index_; }
+  constexpr int index() const noexcept { return index_; }
 
 private:
   template <std::size_t I, typename... ResultValues>
-  void columns(std::tuple<ResultValues...>& result_values) noexcept;
+  void column(std::tuple<ResultValues...>& result_values) noexcept;
 
   stmt_ref stmt_ref_;
 
@@ -39,8 +39,12 @@ template <typename ResultValue>
 columner& operator>>(columner& c, ResultValue& result_value) noexcept;
 
 
-template <typename... ResultValues>
-std::tuple<ResultValues...> columns(stmt_ref statement) noexcept;
+template <typename ResultValue>
+ResultValue column(stmt_ref statement) noexcept;
+
+template <typename... ResultValues,
+          typename = std::enable_if_t<sizeof...(ResultValues) != 1>>
+std::tuple<ResultValues...> column(stmt_ref statement) noexcept;
 
 
 // =============================================================================
@@ -55,7 +59,7 @@ template <typename ResultValue>
 ResultValue columner::get() noexcept
 {
   auto result_value = std::tuple<ResultValue>();
-  columns<0>(result_value);
+  column<0>(result_value);
   return std::get<0>(result_value);
 }
 
@@ -63,12 +67,12 @@ template <typename... ResultValues, typename>
 std::tuple<ResultValues...> columner::get() noexcept
 {
   auto result_values = std::tuple<ResultValues...>();
-  columns<0>(result_values);
+  column<0>(result_values);
   return result_values;
 }
 
 template <std::size_t I, typename... ResultValues>
-void columner::columns(std::tuple<ResultValues...>& result_values) noexcept
+void columner::column(std::tuple<ResultValues...>& result_values) noexcept
 {
   if constexpr (I >= sizeof...(ResultValues))
     return;
@@ -84,7 +88,7 @@ void columner::columns(std::tuple<ResultValues...>& result_values) noexcept
 
     std::get<I>(result_values) = column_traits_t::from_value(v);
 
-    return columns<I + 1>(result_values);
+    return column<I + 1>(result_values);
   }
 }
 
@@ -95,8 +99,14 @@ columner& operator>>(columner& c, ResultValue& result_value) noexcept
   return c;
 }
 
-template <typename... ResultValues>
-std::tuple<ResultValues...> columns(const stmt_ref statement) noexcept
+template <typename ResultValue>
+ResultValue column(const stmt_ref statement) noexcept
+{
+  return columner(statement).get<ResultValue>();
+}
+
+template <typename... ResultValues, typename>
+std::tuple<ResultValues...> column(const stmt_ref statement) noexcept
 {
   return columner(statement).get<ResultValues...>();
 }
