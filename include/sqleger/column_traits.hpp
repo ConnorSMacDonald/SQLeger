@@ -1,8 +1,7 @@
 #ifndef SQLEGER_COLUMN_TRAITS_HPP
 #define SQLEGER_COLUMN_TRAITS_HPP
 
-#include <sqleger/bind_traits.hpp>
-#include <sqleger/blob_data.hpp>
+#include <sqleger/null.hpp>
 #include <sqleger/value.hpp>
 
 

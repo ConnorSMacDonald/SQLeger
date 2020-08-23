@@ -11,6 +11,7 @@
 #include <sqleger/constants.hpp>
 #include <sqleger/destructor.hpp>
 #include <sqleger/int.hpp>
+#include <sqleger/null.hpp>
 #include <sqleger/parameter.hpp>
 #include <sqleger/result_exception.hpp>
 #include <sqleger/stmt.hpp>

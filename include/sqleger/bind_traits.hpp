@@ -1,16 +1,11 @@
 #ifndef SQLEGER_BIND_TRAITS_HPP
 #define SQLEGER_BIND_TRAITS_HPP
 
+#include <sqleger/null.hpp>
 #include <sqleger/parameter.hpp>
 
 
 namespace sqleger {
-
-
-struct null_t {
-};
-
-static constexpr null_t null {};
 
 
 template <typename T>
