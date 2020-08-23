@@ -41,7 +41,7 @@ private:
 };
 
 template <typename UserValue>
-binder& operator<<(binder& b, const UserValue& value) noexcept;
+binder& operator<<(binder& b, const UserValue& user_value) noexcept;
 
 
 template <typename... UserValues>
@@ -69,15 +69,14 @@ bind_result binder::bind(const std::tuple<UserValues...>& user_values) noexcept
     return {code_, index_};
   else
   {
-    using tuple_element_type
-      = std::tuple_element_t<I, std::tuple<UserValues...>>;
-    using user_value_type
-      = std::remove_cv_t<std::remove_reference_t<tuple_element_type>>;
-    using bind_traits_type = bind_traits<user_value_type>;
+    using tuple_element_t = std::tuple_element_t<I, std::tuple<UserValues...>>;
+    using user_value_t
+      = std::remove_cv_t<std::remove_reference_t<tuple_element_t>>;
+    using bind_traits_t = bind_traits<user_value_t>;
 
     auto param = parameter(stmt_ref_, ++index_);
 
-    code_ = bind_traits_type::bind(param, std::get<I>(user_values));
+    code_ = bind_traits_t::bind(param, std::get<I>(user_values));
 
     if (is_error(code_))
       return {code_, index_};
@@ -87,9 +86,9 @@ bind_result binder::bind(const std::tuple<UserValues...>& user_values) noexcept
 }
 
 template <typename UserValue>
-binder& operator<<(binder& b, const UserValue& value) noexcept
+binder& operator<<(binder& b, const UserValue& user_value) noexcept
 {
-  b(value);
+  b(user_value);
   return b;
 }
 
