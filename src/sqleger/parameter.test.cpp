@@ -22,7 +22,7 @@ TEST_CASE("A parameter holds a stmt ref and an index", "[parameter]")
 
   const auto p = parameter(s2, 1);
 
-  REQUIRE(p.stmt_ref().c_ptr() == s2.c_ptr());
+  REQUIRE(p.get_stmt_ref().c_ptr() == s2.c_ptr());
   REQUIRE(p.index() == 1);
 }
 

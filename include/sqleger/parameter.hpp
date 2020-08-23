@@ -24,12 +24,12 @@ public:
 
   inline result bind_text(const user_text& value) noexcept;
 
-  constexpr stmt_ref stmt_ref() const noexcept { return stmt_ref_; }
+  constexpr stmt_ref get_stmt_ref() const noexcept { return stmt_ref_; }
 
   constexpr int index() const noexcept { return index_; }
 
 private:
-  ::sqleger::stmt_ref stmt_ref_;
+  stmt_ref stmt_ref_;
   int index_;
 };
 
@@ -37,7 +37,7 @@ private:
 // =============================================================================
 
 
-constexpr parameter::parameter(const ::sqleger::stmt_ref statement,
+constexpr parameter::parameter(const stmt_ref statement,
                                const int index) noexcept :
   stmt_ref_ {statement},
   index_ {index}
