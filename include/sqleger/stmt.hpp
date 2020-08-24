@@ -76,13 +76,13 @@ public:
 
   constexpr stmt() noexcept = default;
 
-  stmt(db_ref db_handle, string_span sql);
+  inline stmt(db_ref db_handle, string_span sql);
 
   explicit constexpr stmt(c_type* c_ptr) noexcept;
 
   constexpr stmt(stmt&& other) noexcept;
 
-  stmt& operator=(stmt&& other) noexcept;
+  inline stmt& operator=(stmt&& other) noexcept;
 
   inline ~stmt() noexcept;
 
