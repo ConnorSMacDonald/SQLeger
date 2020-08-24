@@ -26,6 +26,8 @@ public:
 
   int64 last_insert_rowid() noexcept;
 
+  zstring_view filename(zstring_view db_name = "main") noexcept;
+
   zstring_view errmsg() const noexcept;
 
   constexpr operator bool() const noexcept;

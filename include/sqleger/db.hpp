@@ -25,6 +25,12 @@ int64 db_interface<Impl>::last_insert_rowid() noexcept
 }
 
 template <typename Impl>
+zstring_view db_interface<Impl>::filename(const zstring_view db_name) noexcept
+{
+  return ::sqlite3_db_filename(c_ptr(), db_name.c_str());
+}
+
+template <typename Impl>
 zstring_view db_interface<Impl>::errmsg() const noexcept
 {
   return ::sqlite3_errmsg(c_ptr());

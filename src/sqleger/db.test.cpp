@@ -3,6 +3,8 @@
 
 #include <sqleger/db.hpp>
 
+#include <filesystem>
+
 
 using namespace sqleger;
 
@@ -279,4 +281,20 @@ TEST_CASE("The last insert rowid can be retrieved from a db", "[db]")
 
   const auto ri2 = d.last_insert_rowid();
   REQUIRE(ri2 == 1);
+}
+
+TEST_CASE("A filename can be retrieved from a db", "[db]")
+{
+  const auto filename1
+    = absolute(std::filesystem::path(".sqleger-db-filename-test.db"));
+
+  auto d = db(filename1.string());
+
+  const auto absolute_filename = static_cast<std::string>(d.filename("main"));
+
+  const auto filename2 = std::filesystem::path(absolute_filename);
+
+  REQUIRE(filename1 == filename2);
+
+  REQUIRE(remove(filename1));
 }
