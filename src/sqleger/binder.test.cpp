@@ -9,6 +9,22 @@ using namespace sqleger;
 using namespace sqleger::string_span_literals;
 
 
+TEST_CASE("A bind result can be compared for equality", "[binder]")
+{
+  const bind_result br1 {result::ok, 1};
+  const bind_result br2 {result::error, 1};
+  const bind_result br3 {result::ok, 3};
+
+  REQUIRE(br1 == br1);
+  REQUIRE_FALSE(br1 != br1);
+
+  REQUIRE_FALSE(br1 == br2);
+  REQUIRE(br1 != br2);
+
+  REQUIRE_FALSE(br1 == br3);
+  REQUIRE(br1 != br3);
+}
+
 TEST_CASE("A binder can be used to bind values", "[binder]")
 {
   SECTION("single value")

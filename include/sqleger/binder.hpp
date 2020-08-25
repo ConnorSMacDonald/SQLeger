@@ -15,6 +15,9 @@ struct bind_result {
   int index;
 };
 
+constexpr bool operator==(bind_result left, bind_result right) noexcept;
+constexpr bool operator!=(bind_result left, bind_result right) noexcept;
+
 
 class binder {
 
@@ -50,6 +53,18 @@ bind_result bind(stmt_ref statement, UserValues&&... user_values) noexcept;
 
 // =============================================================================
 
+
+constexpr bool operator==(const bind_result left,
+                          const bind_result right) noexcept
+{
+  return left.code == right.code && left.index == right.index;
+}
+
+constexpr bool operator!=(const bind_result left,
+                          const bind_result right) noexcept
+{
+  return !(left == right);
+}
 
 constexpr binder::binder(const stmt_ref statement) noexcept :
   stmt_ref_ {statement}
