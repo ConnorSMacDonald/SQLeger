@@ -57,7 +57,7 @@ transaction::transaction(const db_ref db_handle) : db_ {db_handle}
 {
   using namespace string_span_literals;
 
-  auto begin_stmt = stmt(db_handle, "BEGIN TRANSACTION"_ss);
+  auto begin_stmt = stmt(db_handle, "BEGIN"_ss);
 
   if (const auto r = begin_stmt.step(); r != result::done)
     throw result_exception(r);
@@ -73,17 +73,17 @@ transaction::transaction(const db_ref db_handle,
     switch (behavior)
     {
       case transaction_behavior::deferred:
-        return "DEFERRED"s;
+        return " DEFERRED"s;
       case transaction_behavior::exclusive:
-        return "EXCLUSIVE"s;
+        return " EXCLUSIVE"s;
       case transaction_behavior::immediate:
-        return "IMMEDIATE"s;
+        return " IMMEDIATE"s;
     }
 
     return ""s;
   }();
 
-  auto begin_stmt = stmt(db_, "BEGIN "s + behavior_string + " TRANSACTION"s);
+  auto begin_stmt = stmt(db_, "BEGIN"s + behavior_string);
 
   if (const auto r = begin_stmt.step(); is_error(r))
     throw result_exception(r);
@@ -135,7 +135,7 @@ result transaction::do_commit() noexcept
 
   stmt s;
 
-  if (const auto r = db_.prepare_v2("COMMIT TRANSACTION"_ss, s); is_error(r))
+  if (const auto r = db_.prepare_v2("COMMIT"_ss, s); is_error(r))
     return r;
 
   return s.step();
@@ -147,7 +147,7 @@ result transaction::do_rollback() noexcept
 
   stmt s;
 
-  if (const auto r = db_.prepare_v2("ROLLBACK TRANSACTION"_ss, s); is_error(r))
+  if (const auto r = db_.prepare_v2("ROLLBACK"_ss, s); is_error(r))
     return r;
 
   return s.step();
