@@ -1,8 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include <sqleger/binder.hpp>
-#include <sqleger/db.hpp>
+#include <sqleger/sqleger.hpp>
 
 
 using namespace sqleger;

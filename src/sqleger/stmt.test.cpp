@@ -1,8 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include <sqleger/db.hpp>
-#include <sqleger/stmt.hpp>
+#include <sqleger/sqleger.hpp>
 
 #include <algorithm>
 #include <cstdint>
