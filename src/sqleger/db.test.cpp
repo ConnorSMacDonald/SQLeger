@@ -298,3 +298,29 @@ TEST_CASE("A filename can be retrieved from a db", "[db]")
 
   REQUIRE(remove(filename1));
 }
+
+TEST_CASE("sqlite3_changes", "[db]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+  REQUIRE(s1.step() == result::done);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
+  REQUIRE(s2.step() == result::done);
+
+  const auto changes1 = d.changes();
+  REQUIRE(changes1 == 1);
+
+  auto s3 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
+  REQUIRE(s3.step() == result::done);
+
+  const auto changes2 = d.changes();
+  REQUIRE(changes2 == 1);
+
+  auto s4 = stmt(d, "DELETE FROM t WHERE x=1"_ss);
+  REQUIRE(s4.step() == result::done);
+
+  const auto changes3 = d.changes();
+  REQUIRE(changes3 == 2);
+}

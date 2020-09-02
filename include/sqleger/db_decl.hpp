@@ -22,6 +22,8 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3;
 
+  int changes() noexcept;
+
   result prepare_v2(string_span sql, stmt& s) noexcept;
 
   int64 last_insert_rowid() noexcept;

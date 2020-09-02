@@ -12,6 +12,12 @@ namespace sqleger {
 
 
 template <typename Impl>
+int db_interface<Impl>::changes() noexcept
+{
+  return ::sqlite3_changes(c_ptr());
+}
+
+template <typename Impl>
 result db_interface<Impl>::prepare_v2(const string_span sql, stmt& s) noexcept
 {
   return int_to_enum<result>(::sqlite3_prepare_v2(
