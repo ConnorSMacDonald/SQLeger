@@ -1,7 +1,7 @@
 #ifndef SQLEGER_COLUMN_TRAITS_HPP
 #define SQLEGER_COLUMN_TRAITS_HPP
 
-#include <sqleger/null.hpp>
+#include <sqleger/sentinels.hpp>
 #include <sqleger/value.hpp>
 
 #include <array>
@@ -40,6 +40,11 @@ struct column_traits<int64> {
 template <>
 struct column_traits<null_t> {
   static inline null_t from_value(value_ref v) noexcept;
+};
+
+template <>
+struct column_traits<skip_t> {
+  static inline skip_t from_value(value_ref v) noexcept;
 };
 
 template <>
@@ -134,6 +139,11 @@ int64 column_traits<int64>::from_value(value_ref v) noexcept
 null_t column_traits<null_t>::from_value(value_ref) noexcept
 {
   return null;
+}
+
+skip_t column_traits<skip_t>::from_value(value_ref) noexcept
+{
+  return skip;
 }
 
 uzstring_view column_traits<uzstring_view>::from_value(value_ref v) noexcept

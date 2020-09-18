@@ -17,7 +17,7 @@
 #include <sqleger/constants.hpp>
 #include <sqleger/destructor.hpp>
 #include <sqleger/int.hpp>
-#include <sqleger/null.hpp>
+#include <sqleger/sentinels.hpp>
 #include <sqleger/parameter.hpp>
 #include <sqleger/result_exception.hpp>
 #include <sqleger/string.hpp>

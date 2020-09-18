@@ -147,6 +147,30 @@ TEST_CASE(
     REQUIRE(s3.step() == result::done);
   }
 
+  SECTION("skip")
+  {
+    auto d = db(":memory:");
+
+    auto s1 = stmt(d, "CREATE TABLE t(x INTEGER)"_ss);
+    REQUIRE(s1.step() == result::done);
+
+    auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
+
+    const auto [r, idx] = bind(s2, null);
+    REQUIRE(r == result::ok);
+    REQUIRE(idx == 1);
+
+    REQUIRE(s2.step() == result::done);
+
+    auto s3 = stmt(d, "SELECT x FROM t"_ss);
+    REQUIRE(s3.step() == result::row);
+
+    const auto sk = column_traits<skip_t>::from_value(s3.column_value(0));
+    REQUIRE(std::is_same_v<std::remove_const_t<decltype(sk)>, skip_t>);
+
+    REQUIRE(s3.step() == result::done);
+  }
+
   SECTION("text")
   {
     auto d = db(":memory:");

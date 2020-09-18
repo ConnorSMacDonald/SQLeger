@@ -1,8 +1,8 @@
 #ifndef SQLEGER_BIND_TRAITS_HPP
 #define SQLEGER_BIND_TRAITS_HPP
 
-#include <sqleger/null.hpp>
 #include <sqleger/parameter.hpp>
+#include <sqleger/sentinels.hpp>
 
 #include <array>
 #include <optional>
@@ -40,6 +40,11 @@ struct bind_traits<int64> {
 template <>
 struct bind_traits<null_t> {
   static inline result bind(parameter p, null_t) noexcept;
+};
+
+template <>
+struct bind_traits<skip_t> {
+  static inline result bind(parameter p, skip_t) noexcept;
 };
 
 template <>
@@ -148,6 +153,11 @@ result bind_traits<int64>::bind(parameter p, const int64 value) noexcept
 result bind_traits<null_t>::bind(parameter p, null_t) noexcept
 {
   return p.bind_null();
+}
+
+result bind_traits<skip_t>::bind(parameter p, skip_t) noexcept
+{
+  return result::ok;
 }
 
 result bind_traits<user_text>::bind(parameter p,

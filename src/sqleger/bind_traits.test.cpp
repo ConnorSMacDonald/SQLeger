@@ -152,6 +152,23 @@ TEST_CASE(
     REQUIRE(s3.step() == result::done);
   }
 
+  SECTION("skip")
+  {
+    auto d = db(":memory:");
+
+    auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL)"_ss);
+    REQUIRE(s1.step() == result::done);
+
+    auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
+
+    auto p = parameter(s2, 1);
+
+    const auto r = bind_traits<skip_t>::bind(p, skip);
+    REQUIRE(r == result::ok);
+
+    REQUIRE(is_error(s2.step()));
+  }
+
   SECTION("text")
   {
     auto d = db(":memory:");
