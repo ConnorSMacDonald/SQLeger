@@ -224,7 +224,7 @@ std::string column_traits<std::string>::from_value(value_ref v) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

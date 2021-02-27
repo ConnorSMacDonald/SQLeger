@@ -21,7 +21,7 @@ constexpr T* exchange_nullptr(T*& ptr) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

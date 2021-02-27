@@ -117,7 +117,7 @@ private:
 };
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

@@ -217,7 +217,7 @@ constexpr value_ref::value_ref(value& other) noexcept :
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

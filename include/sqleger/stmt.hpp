@@ -197,7 +197,7 @@ result stmt::do_finalize() noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

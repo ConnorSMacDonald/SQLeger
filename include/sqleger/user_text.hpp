@@ -53,7 +53,7 @@ basic_user_text<Char>::basic_user_text(
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

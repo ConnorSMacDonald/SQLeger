@@ -22,7 +22,7 @@ struct skip_t {
 static constexpr skip_t skip {};
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

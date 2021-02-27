@@ -153,7 +153,7 @@ constexpr db_ref::db_ref(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
 constexpr db_ref::db_ref(db& other) noexcept : db_ref {other.c_ptr()} {}
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

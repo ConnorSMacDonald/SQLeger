@@ -11,7 +11,7 @@ using int64 = ::sqlite3_int64;
 using uint64 = ::sqlite3_uint64;
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

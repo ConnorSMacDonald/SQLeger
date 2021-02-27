@@ -112,7 +112,7 @@ std::tuple<ResultValues...> column(stmt_ref const statement) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

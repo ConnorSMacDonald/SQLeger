@@ -88,8 +88,8 @@ inline namespace zstring_view_literals {
 
 constexpr zstring_view operator""_zv(char const* c_str, std::size_t) noexcept;
 
-}; // namespace zstring_view_literals
-}; // namespace literals
+} // namespace zstring_view_literals
+} // namespace literals
 
 
 template <typename Char>
@@ -187,8 +187,8 @@ inline namespace string_span_literals {
 constexpr string_span operator""_ss(char const* data,
                                     std::size_t length) noexcept;
 
-}; // namespace string_span_literals
-}; // namespace literals
+} // namespace string_span_literals
+} // namespace literals
 
 
 template <typename Char>
@@ -322,8 +322,8 @@ constexpr zstring_view operator""_zv(char const* const c_str,
   return c_str;
 }
 
-}; // namespace zstring_view_literals
-}; // namespace literals
+} // namespace zstring_view_literals
+} // namespace literals
 
 
 template <typename Char>
@@ -480,8 +480,8 @@ constexpr string_span operator""_ss(char const* const data,
   return {data, static_cast<int>(length)};
 }
 
-}; // namespace string_span_literals
-}; // namespace literals
+} // namespace string_span_literals
+} // namespace literals
 
 template <typename Char>
 constexpr int zlength(basic_zstring_view<Char> const view) noexcept
@@ -496,7 +496,7 @@ constexpr int zlength(basic_zstring_view<Char> const view) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

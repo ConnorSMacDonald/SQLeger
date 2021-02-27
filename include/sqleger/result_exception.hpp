@@ -38,7 +38,7 @@ char const* result_exception::what() const noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

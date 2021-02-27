@@ -103,7 +103,7 @@ basic_user_blob<Size>::basic_user_blob(
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

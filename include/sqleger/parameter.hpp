@@ -74,7 +74,7 @@ result parameter::bind_text(user_text const& value) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

@@ -253,7 +253,7 @@ bind_traits<std::string_view>::bind(parameter p,
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

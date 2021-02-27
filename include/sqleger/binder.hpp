@@ -114,7 +114,7 @@ bind_result bind(stmt_ref const statement, UserValues&&... user_values) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

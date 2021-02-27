@@ -13,7 +13,7 @@ static auto const _static = SQLITE_STATIC;
 static auto const transient = SQLITE_TRANSIENT;
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

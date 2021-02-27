@@ -69,7 +69,7 @@ std::array<T, N> blob_data::as_array() const noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

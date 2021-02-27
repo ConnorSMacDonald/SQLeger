@@ -212,7 +212,7 @@ constexpr bool is_non_error(result const code) noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif

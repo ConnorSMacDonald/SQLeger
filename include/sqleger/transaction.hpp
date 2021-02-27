@@ -154,7 +154,7 @@ result transaction::do_rollback() noexcept
 }
 
 
-}; // namespace sqleger
+} // namespace sqleger
 
 
 #endif
