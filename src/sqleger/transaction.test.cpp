@@ -61,7 +61,7 @@ TEST_CASE("A transaction can be used as an RAII interface", "[transaction]")
     auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
     REQUIRE(s2.step() == result::done);
 
-    const auto r = t.commit_now();
+    auto const r = t.commit_now();
     REQUIRE(is_non_error(r));
     REQUIRE(t.db_handle().c_ptr() == nullptr);
 
@@ -82,7 +82,7 @@ TEST_CASE("A transaction can be used as an RAII interface", "[transaction]")
     auto s2 = stmt(d, "INSERT INTO t VALUES(1)"_ss);
     REQUIRE(s2.step() == result::done);
 
-    const auto r = t.rollback_now();
+    auto const r = t.rollback_now();
     REQUIRE(is_non_error(r));
     REQUIRE(t.db_handle().c_ptr() == nullptr);
 

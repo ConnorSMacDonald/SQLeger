@@ -19,11 +19,11 @@ public:
   using size_type = Size;
 
   template <typename T, auto N>
-  basic_user_blob(const std::array<T, N>& data,
+  basic_user_blob(std::array<T, N> const& data,
                   destructor_type destructor = transient) noexcept;
 
   template <typename T, typename Allocator>
-  basic_user_blob(const std::vector<T, Allocator>& data,
+  basic_user_blob(std::vector<T, Allocator> const& data,
                   destructor_type destructor = transient) noexcept;
 
   template <typename ContiguousItr>
@@ -32,18 +32,18 @@ public:
                   destructor_type destructor = transient) noexcept;
 
   template <typename T>
-  basic_user_blob(const T* data,
+  basic_user_blob(T const* data,
                   size_type size,
                   destructor_type destructor = transient) noexcept;
 
-  constexpr const void* data() const noexcept { return data_; }
+  constexpr void const* data() const noexcept { return data_; }
 
   constexpr size_type size_bytes() const noexcept { return size_bytes_; }
 
   constexpr destructor_type destructor() const noexcept { return destructor_; }
 
 private:
-  const void* data_ = nullptr;
+  void const* data_ = nullptr;
   size_type size_bytes_ = {};
   destructor_type destructor_ = transient;
 };
@@ -57,8 +57,8 @@ using user_blob = basic_user_blob<int>;
 template <typename Size>
 template <typename T, auto N>
 basic_user_blob<Size>::basic_user_blob(
-  const std::array<T, N>& data,
-  const destructor_type destructor) noexcept :
+  std::array<T, N> const& data,
+  destructor_type const destructor) noexcept :
   data_ {data.data()},
   size_bytes_ {static_cast<size_type>(N * sizeof(T))},
   destructor_ {destructor}
@@ -68,9 +68,9 @@ basic_user_blob<Size>::basic_user_blob(
 template <typename Size>
 template <typename T, typename Allocator>
 basic_user_blob<Size>::basic_user_blob(
-  const std::vector<T, Allocator>& data,
-  const destructor_type destructor) noexcept :
-  data_ {reinterpret_cast<const void*>(data.data())},
+  std::vector<T, Allocator> const& data,
+  destructor_type const destructor) noexcept :
+  data_ {reinterpret_cast<void const*>(data.data())},
   size_bytes_ {static_cast<size_type>(data.size() * sizeof(T))},
   destructor_ {destructor}
 {
@@ -79,10 +79,10 @@ basic_user_blob<Size>::basic_user_blob(
 template <typename Size>
 template <typename ContiguousItr>
 basic_user_blob<Size>::basic_user_blob(
-  const ContiguousItr begin,
-  const ContiguousItr end,
-  const destructor_type destructor) noexcept :
-  data_ {reinterpret_cast<const void*>(std::addressof(*begin))},
+  ContiguousItr const begin,
+  ContiguousItr const end,
+  destructor_type const destructor) noexcept :
+  data_ {reinterpret_cast<void const*>(std::addressof(*begin))},
   size_bytes_ {static_cast<size_type>(
     std::distance(begin, end)
     * sizeof(typename std::iterator_traits<ContiguousItr>::value_type))},
@@ -93,10 +93,10 @@ basic_user_blob<Size>::basic_user_blob(
 template <typename Size>
 template <typename T>
 basic_user_blob<Size>::basic_user_blob(
-  const T* const data,
-  const size_type size,
-  const destructor_type destructor) noexcept :
-  data_ {reinterpret_cast<const void*>(data)},
+  T const* const data,
+  size_type const size,
+  destructor_type const destructor) noexcept :
+  data_ {reinterpret_cast<void const*>(data)},
   size_bytes_ {static_cast<size_type>(size * sizeof(T))},
   destructor_ {destructor}
 {

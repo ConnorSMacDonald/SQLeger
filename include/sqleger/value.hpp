@@ -159,7 +159,7 @@ constexpr value_interface<Impl>::operator bool() const noexcept
 template <typename Impl>
 constexpr auto value_interface<Impl>::c_ptr() const noexcept -> c_type*
 {
-  return static_cast<const impl_type*>(this)->c_ptr();
+  return static_cast<impl_type const*>(this)->c_ptr();
 }
 
 constexpr value::value(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}

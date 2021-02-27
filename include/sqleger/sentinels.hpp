@@ -13,7 +13,7 @@ static constexpr null_t null {};
 
 struct skip_t {
   template <typename T>
-  constexpr const skip_t& operator=(const T&) const noexcept
+  constexpr skip_t const& operator=(T const&) const noexcept
   {
     return *this;
   }

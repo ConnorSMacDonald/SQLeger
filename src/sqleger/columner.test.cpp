@@ -19,9 +19,9 @@ TEST_CASE("A columner can be used to retrieve column data", "[columner]")
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
-    const auto int1 = 234;
+    auto const int1 = 234;
 
-    const auto [r, idx] = bind(s2, int1);
+    auto const [r, idx] = bind(s2, int1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 1);
 
@@ -32,7 +32,7 @@ TEST_CASE("A columner can be used to retrieve column data", "[columner]")
 
     auto c = columner(s3);
 
-    const auto int2 = c.get<int>();
+    auto const int2 = c.get<int>();
     REQUIRE(int2 == int1);
 
     REQUIRE(c.index() == 0);
@@ -49,10 +49,10 @@ TEST_CASE("A columner can be used to retrieve column data", "[columner]")
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
 
-    const auto int1 = 234;
-    const auto double1 = 4.25;
+    auto const int1 = 234;
+    auto const double1 = 4.25;
 
-    const auto [r, idx] = bind(s2, int1, double1);
+    auto const [r, idx] = bind(s2, int1, double1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 2);
 
@@ -63,7 +63,7 @@ TEST_CASE("A columner can be used to retrieve column data", "[columner]")
 
     auto c = columner(s3);
 
-    const auto [int2, double2] = c.get<int, double>();
+    auto const [int2, double2] = c.get<int, double>();
     REQUIRE(int2 == int1);
     REQUIRE(double2 == double1);
 
@@ -86,9 +86,9 @@ TEST_CASE(
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
-    const auto int1 = 234;
+    auto const int1 = 234;
 
-    const auto [r, idx] = bind(s2, int1);
+    auto const [r, idx] = bind(s2, int1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 1);
 
@@ -99,7 +99,7 @@ TEST_CASE(
 
     auto c = columner(s3);
 
-    const auto int2 = [&]() {
+    auto const int2 = [&]() {
       auto i = 0;
       c >> i;
       return i;
@@ -120,10 +120,10 @@ TEST_CASE(
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
 
-    const auto int1 = 234;
-    const auto double1 = 4.25;
+    auto const int1 = 234;
+    auto const double1 = 4.25;
 
-    const auto [r, idx] = bind(s2, int1, double1);
+    auto const [r, idx] = bind(s2, int1, double1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 2);
 
@@ -134,7 +134,7 @@ TEST_CASE(
 
     auto c = columner(s3);
 
-    const auto [int2, double2] = [&]() {
+    auto const [int2, double2] = [&]() {
       auto i = 0;
       auto dbl = 0.0;
       c >> i >> dbl;
@@ -162,9 +162,9 @@ TEST_CASE(
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1)"_ss);
 
-    const auto int1 = 234;
+    auto const int1 = 234;
 
-    const auto [r, idx] = bind(s2, int1);
+    auto const [r, idx] = bind(s2, int1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 1);
 
@@ -173,7 +173,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = column<int>(s3);
+    auto const int2 = column<int>(s3);
     REQUIRE(int2 == int1);
 
     REQUIRE(s3.step() == result::done);
@@ -188,10 +188,10 @@ TEST_CASE(
 
     auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
 
-    const auto int1 = 234;
-    const auto double1 = 4.25;
+    auto const int1 = 234;
+    auto const double1 = 4.25;
 
-    const auto [r, idx] = bind(s2, int1, double1);
+    auto const [r, idx] = bind(s2, int1, double1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 2);
 
@@ -200,7 +200,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x, y FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto [int2, double2] = column<int, double>(s3);
+    auto const [int2, double2] = column<int, double>(s3);
     REQUIRE(int2 == int1);
     REQUIRE(double2 == double1);
 

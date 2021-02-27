@@ -155,8 +155,8 @@ template <typename T, typename Allocator>
 std::vector<T, Allocator>
 column_traits<std::vector<T, Allocator>>::from_value(value_ref v) noexcept
 {
-  const auto data = v.blob();
-  const auto size = static_cast<std::size_t>(v.bytes()) / sizeof(T);
+  auto const data = v.blob();
+  auto const size = static_cast<std::size_t>(v.bytes()) / sizeof(T);
 
   return data.as_vector<T, Allocator>(size);
 }

@@ -53,23 +53,23 @@ private:
 // =============================================================================
 
 
-transaction::transaction(const db_ref db_handle) : db_ {db_handle}
+transaction::transaction(db_ref const db_handle) : db_ {db_handle}
 {
   using namespace string_span_literals;
 
   auto begin_stmt = stmt(db_handle, "BEGIN"_ss);
 
-  if (const auto r = begin_stmt.step(); r != result::done)
+  if (auto const r = begin_stmt.step(); r != result::done)
     throw result_exception(r);
 }
 
-transaction::transaction(const db_ref db_handle,
-                         const transaction_behavior behavior) :
+transaction::transaction(db_ref const db_handle,
+                         transaction_behavior const behavior) :
   db_ {db_handle}
 {
   using namespace std::string_literals;
 
-  const auto behavior_string = [&]() {
+  auto const behavior_string = [&]() {
     switch (behavior)
     {
       case transaction_behavior::deferred:
@@ -85,7 +85,7 @@ transaction::transaction(const db_ref db_handle,
 
   auto begin_stmt = stmt(db_, "BEGIN"s + behavior_string);
 
-  if (const auto r = begin_stmt.step(); is_error(r))
+  if (auto const r = begin_stmt.step(); is_error(r))
     throw result_exception(r);
 }
 
@@ -117,14 +117,14 @@ void transaction::rollback() noexcept
 
 result transaction::commit_now() noexcept
 {
-  const auto r = do_commit();
+  auto const r = do_commit();
   db_ = db_ref();
   return r;
 }
 
 result transaction::rollback_now() noexcept
 {
-  const auto r = do_rollback();
+  auto const r = do_rollback();
   db_ = db_ref();
   return r;
 }
@@ -135,7 +135,7 @@ result transaction::do_commit() noexcept
 
   stmt s;
 
-  if (const auto r = db_.prepare_v2("COMMIT"_ss, s); is_error(r))
+  if (auto const r = db_.prepare_v2("COMMIT"_ss, s); is_error(r))
     return r;
 
   return s.step();
@@ -147,7 +147,7 @@ result transaction::do_rollback() noexcept
 
   stmt s;
 
-  if (const auto r = db_.prepare_v2("ROLLBACK"_ss, s); is_error(r))
+  if (auto const r = db_.prepare_v2("ROLLBACK"_ss, s); is_error(r))
     return r;
 
   return s.step();

@@ -162,19 +162,19 @@ constexpr bool is_non_error(result code) noexcept;
 
 
 template <typename Enum>
-constexpr std::underlying_type_t<Enum> enum_to_int(const Enum value) noexcept
+constexpr std::underlying_type_t<Enum> enum_to_int(Enum const value) noexcept
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
 }
 
 template <typename Enum>
-constexpr Enum int_to_enum(const std::underlying_type_t<Enum> value) noexcept
+constexpr Enum int_to_enum(std::underlying_type_t<Enum> const value) noexcept
 {
   return static_cast<Enum>(value);
 }
 
 template <typename Enum>
-constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
+constexpr Enum flags(std::initializer_list<Enum> const values) noexcept
 {
   using int_type = std::underlying_type_t<Enum>;
 
@@ -182,31 +182,31 @@ constexpr Enum flags(const std::initializer_list<Enum> values) noexcept
 
   auto result = static_cast<int_type>(0);
 
-  for (const auto e : values)
+  for (auto const e : values)
     result |= static_cast<int_type>(e);
 
   return static_cast<Enum>(result);
 }
 
-inline zstring_view errstr(const result code) noexcept
+inline zstring_view errstr(result const code) noexcept
 {
   return ::sqlite3_errstr(enum_to_int(code));
 }
 
-constexpr result primary_result(const result code) noexcept
+constexpr result primary_result(result const code) noexcept
 {
   return static_cast<result>(static_cast<int>(code) & 0xFF);
 }
 
-constexpr bool is_error(const result code) noexcept
+constexpr bool is_error(result const code) noexcept
 {
-  const auto primary = primary_result(code);
+  auto const primary = primary_result(code);
 
   return !(primary == result::ok || primary == result::row
            || primary == result::done);
 }
 
-constexpr bool is_non_error(const result code) noexcept
+constexpr bool is_non_error(result const code) noexcept
 {
   return !is_error(code);
 }

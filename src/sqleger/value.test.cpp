@@ -29,7 +29,7 @@ TEST_CASE("A value holds an sqlite3_value*", "[value]")
 
     auto s3 = stmt(d, "SELECT x FROM t");
 
-    const auto* const c_ptr1 = ::sqlite3_column_value(s3.c_ptr(), 0);
+    auto const* const c_ptr1 = ::sqlite3_column_value(s3.c_ptr(), 0);
     REQUIRE(c_ptr1 != nullptr);
 
     auto* const c_ptr2 = ::sqlite3_value_dup(c_ptr1);
@@ -59,7 +59,7 @@ TEST_CASE("A value can be freed", "[value]")
 
   auto s3 = stmt(d, "SELECT x FROM t");
 
-  const auto* const c_ptr = ::sqlite3_column_value(s3.c_ptr(), 0);
+  auto const* const c_ptr = ::sqlite3_column_value(s3.c_ptr(), 0);
   REQUIRE(c_ptr != nullptr);
 
   auto v = value(::sqlite3_value_dup(c_ptr));
@@ -145,7 +145,7 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3, ?4, ?5, ?6)"_ss);
 
-  const std::vector<uint64_t> vector = {1, 2, 3, 4, 5};
+  std::vector<uint64_t> const vector = {1, 2, 3, 4, 5};
   constexpr auto ss = " vqlflz.tlue VPNRE103-====++++"_ss;
 
   REQUIRE(s2.bind_blob(1, vector) == result::ok);
@@ -158,7 +158,7 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
 
   auto s3 = stmt(d, "SELECT a, b, c, d, e, f FROM t"_ss);
 
-  const auto r1 = s3.step();
+  auto const r1 = s3.step();
   REQUIRE(r1 == result::row);
 
   auto v0 = value_ref(::sqlite3_column_value(s3.c_ptr(), 0));
@@ -168,47 +168,47 @@ TEST_CASE("Data can be retrieved from a value", "[value]")
   auto v4 = value_ref(::sqlite3_column_value(s3.c_ptr(), 4));
   auto v5 = value_ref(::sqlite3_column_value(s3.c_ptr(), 5));
 
-  const auto dt0 = v0.type();
+  auto const dt0 = v0.type();
   REQUIRE(dt0 == datatype::blob);
 
-  const auto dt1 = v1.type();
+  auto const dt1 = v1.type();
   REQUIRE(dt1 == datatype::_float);
 
-  const auto dt2 = v2.type();
+  auto const dt2 = v2.type();
   REQUIRE(dt2 == datatype::integer);
 
-  const auto dt3 = v3.type();
+  auto const dt3 = v3.type();
   REQUIRE(dt3 == datatype::integer);
 
-  const auto dt4 = v4.type();
+  auto const dt4 = v4.type();
   REQUIRE(dt4 == datatype::null);
 
-  const auto dt5 = v5.type();
+  auto const dt5 = v5.type();
   REQUIRE(dt5 == datatype::text);
 
-  const auto c0_sz = v0.bytes();
+  auto const c0_sz = v0.bytes();
   REQUIRE(c0_sz == 40);
 
-  const auto c0 = v0.blob();
-  const auto c0_vector = c0.as_vector<uint64_t>(vector.size());
+  auto const c0 = v0.blob();
+  auto const c0_vector = c0.as_vector<uint64_t>(vector.size());
   REQUIRE(c0_vector == vector);
 
-  const auto c1 = v1._double();
+  auto const c1 = v1._double();
   REQUIRE(c1 == 0.25);
 
-  const auto c2 = v2._int();
+  auto const c2 = v2._int();
   REQUIRE(c2 == 2);
 
-  const auto c3 = v3.int64();
+  auto const c3 = v3.int64();
   REQUIRE(c3 == int64(3));
 
-  const auto c5_sz = v5.bytes();
+  auto const c5_sz = v5.bytes();
   REQUIRE(c5_sz == ss.length());
 
-  const auto c5 = v5.text();
-  const auto c5_ascii = utf8_to_ascii(c5);
+  auto const c5 = v5.text();
+  auto const c5_ascii = utf8_to_ascii(c5);
   REQUIRE(string_span(c5_ascii) == ss);
 
-  const auto r2 = s3.step();
+  auto const r2 = s3.step();
   REQUIRE(r2 == result::done);
 }

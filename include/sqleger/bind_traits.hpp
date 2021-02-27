@@ -19,7 +19,7 @@ struct bind_traits;
 
 template <>
 struct bind_traits<user_blob> {
-  static inline result bind(parameter p, const user_blob& value) noexcept;
+  static inline result bind(parameter p, user_blob const& value) noexcept;
 };
 
 template <>
@@ -49,19 +49,19 @@ struct bind_traits<skip_t> {
 
 template <>
 struct bind_traits<user_text> {
-  static inline result bind(parameter p, const user_text& value) noexcept;
+  static inline result bind(parameter p, user_text const& value) noexcept;
 };
 
 template <typename T, typename Allocator>
 struct bind_traits<std::vector<T, Allocator>> {
   static inline result bind(parameter p,
-                            const std::vector<T, Allocator>& value) noexcept;
+                            std::vector<T, Allocator> const& value) noexcept;
 };
 
 template <typename T, std::size_t N>
 struct bind_traits<std::array<T, N>> {
   static inline result bind(parameter p,
-                            const std::array<T, N>& value) noexcept;
+                            std::array<T, N> const& value) noexcept;
 };
 
 template <>
@@ -102,7 +102,7 @@ struct bind_traits<bool> {
 template <typename T>
 struct bind_traits<std::optional<T>> {
   static inline result bind(parameter p,
-                            const std::optional<T>& value) noexcept;
+                            std::optional<T> const& value) noexcept;
 };
 
 template <>
@@ -111,13 +111,13 @@ struct bind_traits<char> {
 };
 
 template <>
-struct bind_traits<const char*> {
-  static inline result bind(parameter p, const char* value) noexcept;
+struct bind_traits<char const*> {
+  static inline result bind(parameter p, char const* value) noexcept;
 };
 
 template <>
 struct bind_traits<std::string> {
-  static inline result bind(parameter p, const std::string& value) noexcept;
+  static inline result bind(parameter p, std::string const& value) noexcept;
 };
 
 template <>
@@ -130,22 +130,22 @@ struct bind_traits<std::string_view> {
 
 
 result bind_traits<user_blob>::bind(parameter p,
-                                    const user_blob& value) noexcept
+                                    user_blob const& value) noexcept
 {
   return p.bind_blob(value);
 }
 
-result bind_traits<double>::bind(parameter p, const double value) noexcept
+result bind_traits<double>::bind(parameter p, double const value) noexcept
 {
   return p.bind_double(value);
 }
 
-result bind_traits<int>::bind(parameter p, const int value) noexcept
+result bind_traits<int>::bind(parameter p, int const value) noexcept
 {
   return p.bind_int(value);
 }
 
-result bind_traits<int64>::bind(parameter p, const int64 value) noexcept
+result bind_traits<int64>::bind(parameter p, int64 const value) noexcept
 {
   return p.bind_int64(value);
 }
@@ -161,7 +161,7 @@ result bind_traits<skip_t>::bind(parameter p, skip_t) noexcept
 }
 
 result bind_traits<user_text>::bind(parameter p,
-                                    const user_text& value) noexcept
+                                    user_text const& value) noexcept
 {
   return p.bind_text(value);
 }
@@ -169,7 +169,7 @@ result bind_traits<user_text>::bind(parameter p,
 template <typename T, typename Allocator>
 result bind_traits<std::vector<T, Allocator>>::bind(
   parameter p,
-  const std::vector<T, Allocator>& value) noexcept
+  std::vector<T, Allocator> const& value) noexcept
 {
   return p.bind_blob(user_blob(value));
 }
@@ -177,45 +177,45 @@ result bind_traits<std::vector<T, Allocator>>::bind(
 template <typename T, std::size_t N>
 result
 bind_traits<std::array<T, N>>::bind(parameter p,
-                                    const std::array<T, N>& value) noexcept
+                                    std::array<T, N> const& value) noexcept
 {
   return p.bind_blob(user_blob(value));
 }
 
-result bind_traits<float>::bind(parameter p, const float value) noexcept
+result bind_traits<float>::bind(parameter p, float const value) noexcept
 {
   return p.bind_double(static_cast<double>(value));
 }
 
-result bind_traits<short>::bind(parameter p, const short value) noexcept
+result bind_traits<short>::bind(parameter p, short const value) noexcept
 {
   return p.bind_int(static_cast<int>(value));
 }
 
 result bind_traits<unsigned short>::bind(parameter p,
-                                         const unsigned short value) noexcept
+                                         unsigned short const value) noexcept
 {
   return p.bind_int(static_cast<int>(value));
 }
 
 result bind_traits<unsigned int>::bind(parameter p,
-                                       const unsigned int value) noexcept
+                                       unsigned int const value) noexcept
 {
   return p.bind_int64(static_cast<int64>(value));
 }
 
-result bind_traits<long>::bind(parameter p, const long value) noexcept
+result bind_traits<long>::bind(parameter p, long const value) noexcept
 {
   return p.bind_int64(static_cast<int64>(value));
 }
 
 result bind_traits<unsigned long>::bind(parameter p,
-                                        const unsigned long value) noexcept
+                                        unsigned long const value) noexcept
 {
   return p.bind_int64(static_cast<int64>(value));
 }
 
-result bind_traits<bool>::bind(parameter p, const bool value) noexcept
+result bind_traits<bool>::bind(parameter p, bool const value) noexcept
 {
   return p.bind_int(static_cast<int>(value));
 }
@@ -223,31 +223,31 @@ result bind_traits<bool>::bind(parameter p, const bool value) noexcept
 template <typename T>
 result
 bind_traits<std::optional<T>>::bind(parameter p,
-                                    const std::optional<T>& value) noexcept
+                                    std::optional<T> const& value) noexcept
 {
   return value ? bind_traits<T>::bind(p, *value) : p.bind_null();
 }
 
-result bind_traits<char>::bind(parameter p, const char value) noexcept
+result bind_traits<char>::bind(parameter p, char const value) noexcept
 {
   return p.bind_text(string_span(&value, 1));
 }
 
-result bind_traits<const char*>::bind(parameter p,
-                                      const char* const value) noexcept
+result bind_traits<char const*>::bind(parameter p,
+                                      char const* const value) noexcept
 {
   return p.bind_text(string_span(value));
 }
 
 result bind_traits<std::string>::bind(parameter p,
-                                      const std::string& value) noexcept
+                                      std::string const& value) noexcept
 {
   return p.bind_text(string_span(value));
 }
 
 result
 bind_traits<std::string_view>::bind(parameter p,
-                                    const std::string_view value) noexcept
+                                    std::string_view const value) noexcept
 {
   return p.bind_text(string_span(value));
 }

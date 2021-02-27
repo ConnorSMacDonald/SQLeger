@@ -9,8 +9,8 @@ namespace sqleger {
 
 using destructor_type = sqlite3_destructor_type;
 
-static const auto _static = SQLITE_STATIC;
-static const auto transient = SQLITE_TRANSIENT;
+static auto const _static = SQLITE_STATIC;
+static auto const transient = SQLITE_TRANSIENT;
 
 
 }; // namespace sqleger

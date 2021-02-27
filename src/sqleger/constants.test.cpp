@@ -25,8 +25,8 @@ TEST_CASE("A set of enums can be converted to a bit mask", "[constants]")
 
 TEST_CASE("A error string for a result code can be retrieved", "[constants]")
 {
-  const auto* const cs = sqlite3_errstr(SQLITE_NOMEM);
-  const auto zv = errstr(result::nomem);
+  auto const* const cs = sqlite3_errstr(SQLITE_NOMEM);
+  auto const zv = errstr(result::nomem);
 
   REQUIRE(zv.c_str() == cs);
 }

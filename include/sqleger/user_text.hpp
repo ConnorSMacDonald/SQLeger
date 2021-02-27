@@ -24,14 +24,14 @@ public:
   basic_user_text(string_span span,
                   destructor_type destructor = transient) noexcept;
 
-  constexpr const char_type* data() const noexcept { return data_; }
+  constexpr char_type const* data() const noexcept { return data_; }
 
   constexpr size_type size_bytes() const noexcept { return size_bytes_; }
 
   constexpr destructor_type destructor() const noexcept { return destructor_; }
 
 private:
-  const char_type* data_ = nullptr;
+  char_type const* data_ = nullptr;
   size_type size_bytes_ = {};
   destructor_type destructor_ = transient;
 };
@@ -44,8 +44,8 @@ using user_text = basic_user_text<char>;
 
 template <typename Char>
 basic_user_text<Char>::basic_user_text(
-  const string_span span,
-  const destructor_type destructor) noexcept :
+  string_span const span,
+  destructor_type const destructor) noexcept :
   data_ {span.data()},
   size_bytes_ {static_cast<size_type>(span.length() * sizeof(Char))},
   destructor_ {destructor}

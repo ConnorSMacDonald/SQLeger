@@ -50,7 +50,7 @@ std::tuple<ResultValues...> column(stmt_ref statement) noexcept;
 // =============================================================================
 
 
-constexpr columner::columner(const stmt_ref statement) noexcept :
+constexpr columner::columner(stmt_ref const statement) noexcept :
   stmt_ref_ {statement}
 {
 }
@@ -100,13 +100,13 @@ columner& operator>>(columner& c, ResultValue& result_value) noexcept
 }
 
 template <typename ResultValue>
-ResultValue column(const stmt_ref statement) noexcept
+ResultValue column(stmt_ref const statement) noexcept
 {
   return columner(statement).get<ResultValue>();
 }
 
 template <typename... ResultValues, typename>
-std::tuple<ResultValues...> column(const stmt_ref statement) noexcept
+std::tuple<ResultValues...> column(stmt_ref const statement) noexcept
 {
   return columner(statement).get<ResultValues...>();
 }

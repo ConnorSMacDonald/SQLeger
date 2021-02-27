@@ -19,7 +19,7 @@ TEST_CASE("A parameter holds a stmt ref and an index", "[parameter]")
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1)");
   REQUIRE(s2.step() == result::done);
 
-  const auto p = parameter(s2, 1);
+  auto const p = parameter(s2, 1);
 
   REQUIRE(p.get_stmt_ref().c_ptr() == s2.c_ptr());
   REQUIRE(p.index() == 1);
@@ -49,26 +49,26 @@ TEST_CASE("Data can be bound to a parameter", "[parameter]")
   auto p5 = parameter(s2, 5);
   auto p6 = parameter(s2, 6);
 
-  const std::vector<uint64_t> v = {1, 2, 3, 4, 5};
+  std::vector<uint64_t> const v = {1, 2, 3, 4, 5};
 
-  const auto r1 = p1.bind_blob(v);
+  auto const r1 = p1.bind_blob(v);
   REQUIRE(r1 == result::ok);
 
-  const auto r2 = p2.bind_double(0.25);
+  auto const r2 = p2.bind_double(0.25);
   REQUIRE(r2 == result::ok);
 
-  const auto r3 = p3.bind_int(2);
+  auto const r3 = p3.bind_int(2);
   REQUIRE(r3 == result::ok);
 
-  const auto r4 = p4.bind_int64(3);
+  auto const r4 = p4.bind_int64(3);
   REQUIRE(r4 == result::ok);
 
-  const auto r5 = p5.bind_null();
+  auto const r5 = p5.bind_null();
   REQUIRE(r5 == result::ok);
 
-  const auto r6 = p6.bind_text({"aal;sdfkjjk aAAV NFLS4E352"});
+  auto const r6 = p6.bind_text({"aal;sdfkjjk aAAV NFLS4E352"});
   REQUIRE(r6 == result::ok);
 
-  const auto r7 = s2.step();
+  auto const r7 = s2.step();
   REQUIRE(r7 == result::done);
 }

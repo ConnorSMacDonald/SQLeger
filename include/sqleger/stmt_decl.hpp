@@ -20,7 +20,7 @@ public:
   using impl_type = Impl;
   using c_type = ::sqlite3_stmt;
 
-  result bind_blob(int index, const user_blob& data) noexcept;
+  result bind_blob(int index, user_blob const& data) noexcept;
 
   result bind_double(int index, double value) noexcept;
 
@@ -30,7 +30,7 @@ public:
 
   result bind_null(int index) noexcept;
 
-  result bind_text(int index, const user_text& text) noexcept;
+  result bind_text(int index, user_text const& text) noexcept;
 
   blob_data column_blob(int index) noexcept;
 

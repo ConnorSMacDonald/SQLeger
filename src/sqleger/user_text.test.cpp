@@ -15,7 +15,7 @@ TEST_CASE("A user text can be constructed", "[user_text]")
   {
     constexpr auto zv = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_zv;
 
-    const auto ut = user_text(zv);
+    auto const ut = user_text(zv);
 
     REQUIRE(ut.data() == zv.c_str());
     REQUIRE(ut.size_bytes() == user_text::zstring_size);
@@ -26,7 +26,7 @@ TEST_CASE("A user text can be constructed", "[user_text]")
   {
     constexpr auto zv = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_zv;
 
-    const auto ut = user_text(zv, _static);
+    auto const ut = user_text(zv, _static);
 
     REQUIRE(ut.data() == zv.c_str());
     REQUIRE(ut.size_bytes() == user_text::zstring_size);
@@ -35,9 +35,9 @@ TEST_CASE("A user text can be constructed", "[user_text]")
 
   SECTION("bounded string, transient")
   {
-    const auto ss = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_ss;
+    auto const ss = "asljdfkjsdjfaj sdfa;lsdjlfasdjf"_ss;
 
-    const auto ut = user_text(ss);
+    auto const ut = user_text(ss);
 
     REQUIRE(ut.data() == ss.data());
     REQUIRE(ut.size_bytes() == ss.size());

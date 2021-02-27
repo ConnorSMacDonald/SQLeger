@@ -28,10 +28,10 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const std::vector<uint64_t> v1 = {1, 2, 3, 4, 5};
-    const auto ub = user_blob(v1);
+    std::vector<uint64_t> const v1 = {1, 2, 3, 4, 5};
+    auto const ub = user_blob(v1);
 
-    const auto r = bind_traits<user_blob>::bind(p, ub);
+    auto const r = bind_traits<user_blob>::bind(p, ub);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -39,7 +39,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t");
     REQUIRE(s3.step() == result::row);
 
-    const auto v2 = s3.column_blob(0).as_vector<uint64_t>(v1.size());
+    auto const v2 = s3.column_blob(0).as_vector<uint64_t>(v1.size());
     REQUIRE(v2 == v1);
 
     REQUIRE(s3.step() == result::done);
@@ -56,9 +56,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto double1 = 0.5;
+    auto const double1 = 0.5;
 
-    const auto r = bind_traits<double>::bind(p, double1);
+    auto const r = bind_traits<double>::bind(p, double1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -66,7 +66,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto double2 = s3.column_double(0);
+    auto const double2 = s3.column_double(0);
     REQUIRE(double2 == double1);
 
     REQUIRE(s3.step() == result::done);
@@ -83,9 +83,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto int1 = 34;
+    auto const int1 = 34;
 
-    const auto r = bind_traits<int>::bind(p, int1);
+    auto const r = bind_traits<int>::bind(p, int1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -93,7 +93,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = s3.column_int(0);
+    auto const int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
     REQUIRE(s3.step() == result::done);
@@ -110,10 +110,10 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto int64_1 = static_cast<int64>(
+    auto const int64_1 = static_cast<int64>(
       static_cast<int64>(std::numeric_limits<int>::max()) + 1LL);
 
-    const auto r = bind_traits<int64>::bind(p, int64_1);
+    auto const r = bind_traits<int64>::bind(p, int64_1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -121,7 +121,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int64_2 = s3.column_int64(0);
+    auto const int64_2 = s3.column_int64(0);
     REQUIRE(int64_2 == int64_1);
 
     REQUIRE(s3.step() == result::done);
@@ -138,7 +138,7 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto r = bind_traits<null_t>::bind(p, null);
+    auto const r = bind_traits<null_t>::bind(p, null);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -146,7 +146,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto dt = s3.column_type(0);
+    auto const dt = s3.column_type(0);
     REQUIRE(dt == datatype::null);
 
     REQUIRE(s3.step() == result::done);
@@ -163,7 +163,7 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto r = bind_traits<skip_t>::bind(p, skip);
+    auto const r = bind_traits<skip_t>::bind(p, skip);
     REQUIRE(r == result::ok);
 
     REQUIRE(is_error(s2.step()));
@@ -180,9 +180,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto ss = "sdga$GFA4QdQcwdf vdv QD D qs#3ertASGR3430"_ss;
+    auto const ss = "sdga$GFA4QdQcwdf vdv QD D qs#3ertASGR3430"_ss;
 
-    const auto r = bind_traits<user_text>::bind(p, ss);
+    auto const r = bind_traits<user_text>::bind(p, ss);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -190,7 +190,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto stds = utf8_to_ascii(s3.column_text(0));
+    auto const stds = utf8_to_ascii(s3.column_text(0));
     REQUIRE(string_span(stds) == ss);
 
     REQUIRE(s3.step() == result::done);
@@ -207,9 +207,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto v1 = std::vector<uint64_t>({1, 2, 3, 4, 5});
+    auto const v1 = std::vector<uint64_t>({1, 2, 3, 4, 5});
 
-    const auto r = bind_traits<std::vector<uint64_t>>::bind(p, v1);
+    auto const r = bind_traits<std::vector<uint64_t>>::bind(p, v1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -217,7 +217,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t");
     REQUIRE(s3.step() == result::row);
 
-    const auto v2 = s3.column_blob(0).as_vector<uint64_t>(v1.size());
+    auto const v2 = s3.column_blob(0).as_vector<uint64_t>(v1.size());
     REQUIRE(v2 == v1);
 
     REQUIRE(s3.step() == result::done);
@@ -234,9 +234,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const std::array<uint64_t, 5> a1 {1, 2, 3, 4, 5};
+    std::array<uint64_t, 5> const a1 {1, 2, 3, 4, 5};
 
-    const auto r = bind_traits<std::array<uint64_t, 5>>::bind(p, a1);
+    auto const r = bind_traits<std::array<uint64_t, 5>>::bind(p, a1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -244,7 +244,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t");
     REQUIRE(s3.step() == result::row);
 
-    const auto a2 = s3.column_blob(0).as_array<uint64_t, 5>();
+    auto const a2 = s3.column_blob(0).as_array<uint64_t, 5>();
     REQUIRE(a2 == a1);
 
     REQUIRE(s3.step() == result::done);
@@ -261,9 +261,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto float1 = 0.5f;
+    auto const float1 = 0.5f;
 
-    const auto r = bind_traits<float>::bind(p, float1);
+    auto const r = bind_traits<float>::bind(p, float1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -271,7 +271,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto float2 = static_cast<float>(s3.column_double(0));
+    auto const float2 = static_cast<float>(s3.column_double(0));
     REQUIRE(float2 == float1);
 
     REQUIRE(s3.step() == result::done);
@@ -288,9 +288,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto short1 = static_cast<short>(34);
+    auto const short1 = static_cast<short>(34);
 
-    const auto r = bind_traits<short>::bind(p, short1);
+    auto const r = bind_traits<short>::bind(p, short1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -298,7 +298,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto short2 = static_cast<short>(s3.column_int(0));
+    auto const short2 = static_cast<short>(s3.column_int(0));
     REQUIRE(short2 == short1);
 
     REQUIRE(s3.step() == result::done);
@@ -315,9 +315,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto ushort1 = static_cast<unsigned short>(34);
+    auto const ushort1 = static_cast<unsigned short>(34);
 
-    const auto r = bind_traits<unsigned short>::bind(p, ushort1);
+    auto const r = bind_traits<unsigned short>::bind(p, ushort1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -325,7 +325,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto ushort2 = static_cast<unsigned short>(s3.column_int(0));
+    auto const ushort2 = static_cast<unsigned short>(s3.column_int(0));
     REQUIRE(ushort2 == ushort1);
 
     REQUIRE(s3.step() == result::done);
@@ -342,10 +342,10 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto uint1
+    auto const uint1
       = static_cast<unsigned int>(std::numeric_limits<int>::max()) + 1U;
 
-    const auto r = bind_traits<unsigned int>::bind(p, uint1);
+    auto const r = bind_traits<unsigned int>::bind(p, uint1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -353,7 +353,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto uint2 = static_cast<unsigned int>(s3.column_int64(0));
+    auto const uint2 = static_cast<unsigned int>(s3.column_int64(0));
     REQUIRE(uint2 == uint1);
 
     REQUIRE(s3.step() == result::done);
@@ -370,9 +370,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto long1 = static_cast<long>(std::numeric_limits<int>::max()) + 1L;
+    auto const long1 = static_cast<long>(std::numeric_limits<int>::max()) + 1L;
 
-    const auto r = bind_traits<long>::bind(p, long1);
+    auto const r = bind_traits<long>::bind(p, long1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -380,7 +380,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto long2 = static_cast<long>(s3.column_int64(0));
+    auto const long2 = static_cast<long>(s3.column_int64(0));
     REQUIRE(long2 == long1);
 
     REQUIRE(s3.step() == result::done);
@@ -397,10 +397,10 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto ulong1
+    auto const ulong1
       = static_cast<unsigned long>(std::numeric_limits<int>::max()) + 1UL;
 
-    const auto r = bind_traits<unsigned long>::bind(p, ulong1);
+    auto const r = bind_traits<unsigned long>::bind(p, ulong1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -408,7 +408,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto ulong2 = static_cast<unsigned long>(s3.column_int64(0));
+    auto const ulong2 = static_cast<unsigned long>(s3.column_int64(0));
     REQUIRE(ulong2 == ulong1);
 
     REQUIRE(s3.step() == result::done);
@@ -425,9 +425,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto bool1 = true;
+    auto const bool1 = true;
 
-    const auto r = bind_traits<bool>::bind(p, bool1);
+    auto const r = bind_traits<bool>::bind(p, bool1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -435,7 +435,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto bool2 = static_cast<bool>(s3.column_int(0));
+    auto const bool2 = static_cast<bool>(s3.column_int(0));
     REQUIRE(bool2 == bool1);
 
     REQUIRE(s3.step() == result::done);
@@ -454,7 +454,7 @@ TEST_CASE(
 
       auto p = parameter(s2, 1);
 
-      const auto r = bind_traits<std::optional<bool>>::bind(p, std::nullopt);
+      auto const r = bind_traits<std::optional<bool>>::bind(p, std::nullopt);
       REQUIRE(r == result::ok);
 
       REQUIRE(s2.step() == result::done);
@@ -462,7 +462,7 @@ TEST_CASE(
       auto s3 = stmt(d, "SELECT x FROM t"_ss);
       REQUIRE(s3.step() == result::row);
 
-      const auto dt = s3.column_type(0);
+      auto const dt = s3.column_type(0);
       REQUIRE(dt == datatype::null);
 
       REQUIRE(s3.step() == result::done);
@@ -479,9 +479,9 @@ TEST_CASE(
 
       auto p = parameter(s2, 1);
 
-      const auto optional1 = std::make_optional(true);
+      auto const optional1 = std::make_optional(true);
 
-      const auto r = bind_traits<std::optional<bool>>::bind(p, optional1);
+      auto const r = bind_traits<std::optional<bool>>::bind(p, optional1);
       REQUIRE(r == result::ok);
 
       REQUIRE(s2.step() == result::done);
@@ -489,10 +489,10 @@ TEST_CASE(
       auto s3 = stmt(d, "SELECT x FROM t"_ss);
       REQUIRE(s3.step() == result::row);
 
-      const auto dt = s3.column_type(0);
+      auto const dt = s3.column_type(0);
       REQUIRE(dt == datatype::integer);
 
-      const auto bool1 = static_cast<int>(s3.column_int(0));
+      auto const bool1 = static_cast<int>(s3.column_int(0));
       REQUIRE(bool1 == *optional1);
 
       REQUIRE(s3.step() == result::done);
@@ -510,9 +510,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto char1 = 'z';
+    auto const char1 = 'z';
 
-    const auto r = bind_traits<char>::bind(p, char1);
+    auto const r = bind_traits<char>::bind(p, char1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -520,14 +520,14 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto stds = utf8_to_ascii(s3.column_text(0));
+    auto const stds = utf8_to_ascii(s3.column_text(0));
     REQUIRE(stds.size() == 1);
     REQUIRE(stds[0] == char1);
 
     REQUIRE(s3.step() == result::done);
   }
 
-  SECTION("const char*")
+  SECTION("char const*")
   {
     auto d = db(":memory:");
 
@@ -538,9 +538,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto* const c_str1 = "fjkqdwk;dqfj";
+    auto const* const c_str1 = "fjkqdwk;dqfj";
 
-    const auto r = bind_traits<const char*>::bind(p, c_str1);
+    auto const r = bind_traits<char const*>::bind(p, c_str1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -548,7 +548,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto stds = utf8_to_ascii(s3.column_text(0));
+    auto const stds = utf8_to_ascii(s3.column_text(0));
     REQUIRE(stds == c_str1);
 
     REQUIRE(s3.step() == result::done);
@@ -565,9 +565,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto stds1 = "fjkqdwk;dqfj"s;
+    auto const stds1 = "fjkqdwk;dqfj"s;
 
-    const auto r = bind_traits<std::string>::bind(p, stds1);
+    auto const r = bind_traits<std::string>::bind(p, stds1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -575,7 +575,7 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto stds2 = utf8_to_ascii(s3.column_text(0));
+    auto const stds2 = utf8_to_ascii(s3.column_text(0));
     REQUIRE(stds2 == stds1);
 
     REQUIRE(s3.step() == result::done);
@@ -592,9 +592,9 @@ TEST_CASE(
 
     auto p = parameter(s2, 1);
 
-    const auto stdsv1 = "fjkqdwk;dqfj"sv;
+    auto const stdsv1 = "fjkqdwk;dqfj"sv;
 
-    const auto r = bind_traits<std::string_view>::bind(p, stdsv1);
+    auto const r = bind_traits<std::string_view>::bind(p, stdsv1);
     REQUIRE(r == result::ok);
 
     REQUIRE(s2.step() == result::done);
@@ -602,8 +602,8 @@ TEST_CASE(
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto stds = utf8_to_ascii(s3.column_text(0));
-    const auto stdsv2 = static_cast<std::string_view>(stds);
+    auto const stds = utf8_to_ascii(s3.column_text(0));
+    auto const stdsv2 = static_cast<std::string_view>(stds);
     REQUIRE(stdsv2 == stdsv1);
 
     REQUIRE(s3.step() == result::done);

@@ -10,9 +10,9 @@ using namespace sqleger::string_span_literals;
 
 TEST_CASE("A bind result can be compared for equality", "[binder]")
 {
-  const bind_result br1 {result::ok, 1};
-  const bind_result br2 {result::error, 1};
-  const bind_result br3 {result::ok, 3};
+  bind_result const br1 {result::ok, 1};
+  bind_result const br2 {result::error, 1};
+  bind_result const br3 {result::ok, 3};
 
   REQUIRE(br1 == br1);
   REQUIRE_FALSE(br1 != br1);
@@ -37,9 +37,9 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s2);
 
-    const auto int1 = 39;
+    auto const int1 = 39;
 
-    const auto [r, idx] = b(int1);
+    auto const [r, idx] = b(int1);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 1);
 
@@ -48,7 +48,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = s3.column_int(0);
+    auto const int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
     REQUIRE(s3.step() == result::done);
@@ -66,10 +66,10 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s2);
 
-    const auto int1 = 39;
-    const auto double1 = 0.125;
+    auto const int1 = 39;
+    auto const double1 = 0.125;
 
-    const auto [r, idx] = b(int1, double1, null);
+    auto const [r, idx] = b(int1, double1, null);
     REQUIRE(r == result::ok);
     REQUIRE(idx == 3);
 
@@ -78,13 +78,13 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
     auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = s3.column_int(0);
+    auto const int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
-    const auto double2 = s3.column_double(1);
+    auto const double2 = s3.column_double(1);
     REQUIRE(double2 == double1);
 
-    const auto dt = s3.column_type(2);
+    auto const dt = s3.column_type(2);
     REQUIRE(dt == datatype::null);
 
     REQUIRE(s3.step() == result::done);
@@ -101,7 +101,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s2);
 
-    const auto [r, idx] = b();
+    auto const [r, idx] = b();
     REQUIRE(r == result::ok);
     REQUIRE(idx == 0);
 
@@ -116,7 +116,7 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s);
 
-    const auto [r, idx] = b(null);
+    auto const [r, idx] = b(null);
 
     REQUIRE(r == result::range);
     REQUIRE(idx == 1);
@@ -133,10 +133,10 @@ TEST_CASE("A binder can be used to bind values", "[binder]")
 
     auto b = binder(s2);
 
-    const auto int1 = 39;
-    const auto double1 = 0.125;
+    auto const int1 = 39;
+    auto const double1 = 0.125;
 
-    const auto [r, idx] = b(int1, double1, null);
+    auto const [r, idx] = b(int1, double1, null);
     REQUIRE(r == result::range);
     REQUIRE(idx == 3);
   }
@@ -156,7 +156,7 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     auto b = binder(s2);
 
-    const auto int1 = 39;
+    auto const int1 = 39;
 
     b << int1;
 
@@ -168,7 +168,7 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = s3.column_int(0);
+    auto const int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
     REQUIRE(s3.step() == result::done);
@@ -186,8 +186,8 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
 
     auto b = binder(s2);
 
-    const auto int1 = 39;
-    const auto double1 = 0.125;
+    auto const int1 = 39;
+    auto const double1 = 0.125;
 
     b << int1 << double1 << null;
 
@@ -199,13 +199,13 @@ TEST_CASE("A binder can be used to bind values through a stream interface",
     auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
     REQUIRE(s3.step() == result::row);
 
-    const auto int2 = s3.column_int(0);
+    auto const int2 = s3.column_int(0);
     REQUIRE(int2 == int1);
 
-    const auto double2 = s3.column_double(1);
+    auto const double2 = s3.column_double(1);
     REQUIRE(double2 == double1);
 
-    const auto dt = s3.column_type(2);
+    auto const dt = s3.column_type(2);
     REQUIRE(dt == datatype::null);
 
     REQUIRE(s3.step() == result::done);
@@ -223,10 +223,10 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
 
   auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2, ?3)"_ss);
 
-  const auto int1 = 39;
-  const auto double1 = 0.125;
+  auto const int1 = 39;
+  auto const double1 = 0.125;
 
-  const auto [r, idx] = bind(s2, int1, double1, null);
+  auto const [r, idx] = bind(s2, int1, double1, null);
 
   REQUIRE(r == result::ok);
   REQUIRE(idx == 3);
@@ -236,13 +236,13 @@ TEST_CASE("Values can be bound to a stmt through a generic free function",
   auto s3 = stmt(d, "SELECT x, y, z FROM t"_ss);
   REQUIRE(s3.step() == result::row);
 
-  const auto int2 = s3.column_int(0);
+  auto const int2 = s3.column_int(0);
   REQUIRE(int2 == int1);
 
-  const auto double2 = s3.column_double(1);
+  auto const double2 = s3.column_double(1);
   REQUIRE(double2 == double1);
 
-  const auto dt = s3.column_type(2);
+  auto const dt = s3.column_type(2);
   REQUIRE(dt == datatype::null);
 
   REQUIRE(s3.step() == result::done);

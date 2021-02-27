@@ -35,7 +35,7 @@ public:
 
 private:
   template <std::size_t I, typename... UserValues>
-  bind_result bind(const std::tuple<UserValues...>& user_values) noexcept;
+  bind_result bind(std::tuple<UserValues...> const& user_values) noexcept;
 
   stmt_ref stmt_ref_;
 
@@ -44,7 +44,7 @@ private:
 };
 
 template <typename UserValue>
-binder& operator<<(binder& b, const UserValue& user_value) noexcept;
+binder& operator<<(binder& b, UserValue const& user_value) noexcept;
 
 
 template <typename... UserValues>
@@ -54,19 +54,19 @@ bind_result bind(stmt_ref statement, UserValues&&... user_values) noexcept;
 // =============================================================================
 
 
-constexpr bool operator==(const bind_result left,
-                          const bind_result right) noexcept
+constexpr bool operator==(bind_result const left,
+                          bind_result const right) noexcept
 {
   return left.code == right.code && left.index == right.index;
 }
 
-constexpr bool operator!=(const bind_result left,
-                          const bind_result right) noexcept
+constexpr bool operator!=(bind_result const left,
+                          bind_result const right) noexcept
 {
   return !(left == right);
 }
 
-constexpr binder::binder(const stmt_ref statement) noexcept :
+constexpr binder::binder(stmt_ref const statement) noexcept :
   stmt_ref_ {statement}
 {
 }
@@ -78,7 +78,7 @@ bind_result binder::operator()(UserValues&&... user_values) noexcept
 }
 
 template <std::size_t I, typename... UserValues>
-bind_result binder::bind(const std::tuple<UserValues...>& user_values) noexcept
+bind_result binder::bind(std::tuple<UserValues...> const& user_values) noexcept
 {
   if constexpr (I >= sizeof...(UserValues))
     return {code_, index_};
@@ -101,14 +101,14 @@ bind_result binder::bind(const std::tuple<UserValues...>& user_values) noexcept
 }
 
 template <typename UserValue>
-binder& operator<<(binder& b, const UserValue& user_value) noexcept
+binder& operator<<(binder& b, UserValue const& user_value) noexcept
 {
   b(user_value);
   return b;
 }
 
 template <typename... UserValues>
-bind_result bind(const stmt_ref statement, UserValues&&... user_values) noexcept
+bind_result bind(stmt_ref const statement, UserValues&&... user_values) noexcept
 {
   return binder(statement)(std::forward<UserValues>(user_values)...);
 }

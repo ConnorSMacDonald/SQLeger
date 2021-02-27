@@ -92,7 +92,7 @@ public:
 
   open_exception(open_exception&& other) noexcept = default;
 
-  inline const char* what() const noexcept override;
+  inline char const* what() const noexcept override;
 
 private:
   db db_;

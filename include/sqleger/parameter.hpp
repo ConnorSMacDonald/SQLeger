@@ -12,7 +12,7 @@ class parameter {
 public:
   constexpr parameter(stmt_ref statement, int index) noexcept;
 
-  inline result bind_blob(const user_blob& value) noexcept;
+  inline result bind_blob(user_blob const& value) noexcept;
 
   inline result bind_double(double value) noexcept;
 
@@ -22,7 +22,7 @@ public:
 
   inline result bind_null() noexcept;
 
-  inline result bind_text(const user_text& value) noexcept;
+  inline result bind_text(user_text const& value) noexcept;
 
   constexpr stmt_ref get_stmt_ref() const noexcept { return stmt_ref_; }
 
@@ -37,29 +37,28 @@ private:
 // =============================================================================
 
 
-constexpr parameter::parameter(const stmt_ref statement,
-                               const int index) noexcept :
-  stmt_ref_ {statement},
-  index_ {index}
+constexpr parameter::parameter(stmt_ref const statement,
+                               int const index) noexcept :
+  stmt_ref_ {statement}, index_ {index}
 {
 }
 
-result parameter::bind_blob(const user_blob& value) noexcept
+result parameter::bind_blob(user_blob const& value) noexcept
 {
   return stmt_ref_.bind_blob(index_, value);
 }
 
-result parameter::bind_double(const double value) noexcept
+result parameter::bind_double(double const value) noexcept
 {
   return stmt_ref_.bind_double(index_, value);
 }
 
-result parameter::bind_int(const int value) noexcept
+result parameter::bind_int(int const value) noexcept
 {
   return stmt_ref_.bind_int(index_, value);
 }
 
-result parameter::bind_int64(const int64 value) noexcept
+result parameter::bind_int64(int64 const value) noexcept
 {
   return stmt_ref_.bind_int64(index_, value);
 }
@@ -69,7 +68,7 @@ result parameter::bind_null() noexcept
   return stmt_ref_.bind_null(index_);
 }
 
-result parameter::bind_text(const user_text& value) noexcept
+result parameter::bind_text(user_text const& value) noexcept
 {
   return stmt_ref_.bind_text(index_, value);
 }
