@@ -16,11 +16,12 @@
 #include <sqleger/columner.hpp>
 #include <sqleger/constants.hpp>
 #include <sqleger/destructor.hpp>
+#include <sqleger/for_each_row.hpp>
 #include <sqleger/int.hpp>
-#include <sqleger/sentinels.hpp>
 #include <sqleger/parameter.hpp>
 #include <sqleger/result_exception.hpp>
 #include <sqleger/row.hpp>
+#include <sqleger/sentinels.hpp>
 #include <sqleger/string.hpp>
 #include <sqleger/transaction.hpp>
 #include <sqleger/user_blob.hpp>
