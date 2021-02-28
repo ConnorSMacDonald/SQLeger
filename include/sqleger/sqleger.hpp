@@ -20,6 +20,7 @@
 #include <sqleger/sentinels.hpp>
 #include <sqleger/parameter.hpp>
 #include <sqleger/result_exception.hpp>
+#include <sqleger/row.hpp>
 #include <sqleger/string.hpp>
 #include <sqleger/transaction.hpp>
 #include <sqleger/user_blob.hpp>
