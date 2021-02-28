@@ -116,7 +116,7 @@ public:
 
   template <typename Traits>
   constexpr basic_string_span(
-    std::basic_string_view<char_type, Traits> const& string_view) noexcept;
+    std::basic_string_view<char_type, Traits> string_view) noexcept;
 
   constexpr int compare(basic_string_span other) const noexcept;
 
@@ -353,7 +353,7 @@ basic_string_span<Char>::basic_string_span(
 template <typename Char>
 template <typename Traits>
 constexpr basic_string_span<Char>::basic_string_span(
-  std::basic_string_view<char_type, Traits> const& string_view) noexcept :
+  std::basic_string_view<char_type, Traits> const string_view) noexcept :
   basic_string_span {string_view.data(),
                      static_cast<size_type>(string_view.size())}
 {
