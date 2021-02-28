@@ -2,7 +2,7 @@
 #define SQLEGER_COLUMNER_HPP
 
 #include <sqleger/column_traits.hpp>
-#include <sqleger/stmt.hpp>
+#include <sqleger/row.hpp>
 
 #include <tuple>
 
@@ -13,7 +13,9 @@ namespace sqleger {
 class columner {
 
 public:
-  constexpr columner(stmt_ref statement) noexcept;
+  constexpr columner(row r) noexcept;
+
+  constexpr columner(stmt_ref s) noexcept;
 
   template <typename ResultValue>
   ResultValue get() noexcept;
@@ -22,7 +24,7 @@ public:
             typename = std::enable_if_t<sizeof...(ResultValues) != 1>>
   std::tuple<ResultValues...> get() noexcept;
 
-  constexpr stmt_ref get_stmt_ref() const noexcept { return stmt_ref_; }
+  constexpr row get_row() const noexcept { return row_; }
 
   constexpr int index() const noexcept { return index_; }
 
@@ -30,7 +32,7 @@ private:
   template <std::size_t I, typename... ResultValues>
   void column(std::tuple<ResultValues...>& result_values) noexcept;
 
-  stmt_ref stmt_ref_;
+  row row_;
 
   int index_ = -1;
 };
@@ -40,20 +42,26 @@ columner& operator>>(columner& c, ResultValue& result_value) noexcept;
 
 
 template <typename ResultValue>
-ResultValue column(stmt_ref statement) noexcept;
+ResultValue column(row r) noexcept;
+
+template <typename ResultValue>
+ResultValue column(stmt_ref s) noexcept;
 
 template <typename... ResultValues,
           typename = std::enable_if_t<sizeof...(ResultValues) != 1>>
-std::tuple<ResultValues...> column(stmt_ref statement) noexcept;
+std::tuple<ResultValues...> column(row r) noexcept;
+
+template <typename... ResultValues,
+          typename = std::enable_if_t<sizeof...(ResultValues) != 1>>
+std::tuple<ResultValues...> column(stmt_ref s) noexcept;
 
 
 // =============================================================================
 
 
-constexpr columner::columner(stmt_ref const statement) noexcept :
-  stmt_ref_ {statement}
-{
-}
+constexpr columner::columner(row const r) noexcept : row_ {r} {}
+
+constexpr columner::columner(stmt_ref const s) noexcept : columner {row(s)} {}
 
 template <typename ResultValue>
 ResultValue columner::get() noexcept
@@ -84,7 +92,7 @@ void columner::column(std::tuple<ResultValues...>& result_values) noexcept
       = std::remove_volatile_t<std::remove_reference_t<tuple_element_t>>;
     using column_traits_t = column_traits<user_value_t>;
 
-    auto v = stmt_ref_.column_value(++index_);
+    auto v = row_.column_value(++index_);
 
     std::get<I>(result_values) = column_traits_t::from_value(v);
 
@@ -100,15 +108,27 @@ columner& operator>>(columner& c, ResultValue& result_value) noexcept
 }
 
 template <typename ResultValue>
-ResultValue column(stmt_ref const statement) noexcept
+ResultValue column(row const r) noexcept
 {
-  return columner(statement).get<ResultValue>();
+  return columner(r).get<ResultValue>();
+}
+
+template <typename ResultValue>
+ResultValue column(stmt_ref const s) noexcept
+{
+  return column<ResultValue>(row(s));
 }
 
 template <typename... ResultValues, typename>
-std::tuple<ResultValues...> column(stmt_ref const statement) noexcept
+std::tuple<ResultValues...> column(row const r) noexcept
 {
-  return columner(statement).get<ResultValues...>();
+  return columner(r).get<ResultValues...>();
+}
+
+template <typename... ResultValues, typename>
+std::tuple<ResultValues...> column(stmt_ref const s) noexcept
+{
+  return column<ResultValues...>(row(s));
 }
 
 
