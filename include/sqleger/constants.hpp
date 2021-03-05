@@ -12,7 +12,14 @@
 namespace sqleger {
 
 
-enum class result {
+template <typename Enum, typename = std::enable_if_t<std::is_enum_v<Enum>>>
+constexpr std::underlying_type_t<Enum> enum_to_int(Enum value) noexcept;
+
+template <typename Enum, typename = std::enable_if_t<std::is_enum_v<Enum>>>
+constexpr Enum int_to_enum(std::underlying_type_t<Enum> value) noexcept;
+
+
+enum class result : int {
   // Primary result codes
   ok = SQLITE_OK,
   error = SQLITE_ERROR,
@@ -107,7 +114,24 @@ enum class result {
   warning_autoindex = SQLITE_WARNING_AUTOINDEX,
 };
 
-enum class open {
+constexpr result operator|(result l, result r) noexcept;
+constexpr result operator&(result l, result r) noexcept;
+constexpr result operator^(result l, result r) noexcept;
+constexpr result operator~(result code) noexcept;
+
+constexpr result operator|=(result& l, result r) noexcept;
+constexpr result operator&=(result& l, result r) noexcept;
+constexpr result operator^=(result& l, result r) noexcept;
+
+inline zstring_view errstr(result code) noexcept;
+
+constexpr result primary_result(result code) noexcept;
+
+constexpr bool is_error(result code) noexcept;
+constexpr bool is_non_error(result code) noexcept;
+
+
+enum class open : int {
   readonly = SQLITE_OPEN_READONLY,
   readwrite = SQLITE_OPEN_READWRITE,
   create = SQLITE_OPEN_CREATE,
@@ -131,7 +155,17 @@ enum class open {
   nofollow = SQLITE_OPEN_NOFOLLOW,
 };
 
-enum class datatype {
+constexpr open operator|(open l, open r) noexcept;
+constexpr open operator&(open l, open r) noexcept;
+constexpr open operator^(open l, open r) noexcept;
+constexpr open operator~(open o) noexcept;
+
+constexpr open operator|=(open& l, open r) noexcept;
+constexpr open operator&=(open& l, open r) noexcept;
+constexpr open operator^=(open& l, open r) noexcept;
+
+
+enum class datatype : int {
   integer = SQLITE_INTEGER,
   _float = SQLITE_FLOAT,
   text = SQLITE3_TEXT,
@@ -140,52 +174,54 @@ enum class datatype {
 };
 
 
-template <typename Enum>
-constexpr std::underlying_type_t<Enum> enum_to_int(Enum value) noexcept;
-
-template <typename Enum>
-constexpr Enum int_to_enum(std::underlying_type_t<Enum> value) noexcept;
-
-template <typename Enum>
-constexpr Enum flags(std::initializer_list<Enum> values = {}) noexcept;
-
-inline zstring_view errstr(result code) noexcept;
-
-constexpr result primary_result(result code) noexcept;
-
-constexpr bool is_error(result code) noexcept;
-
-constexpr bool is_non_error(result code) noexcept;
-
-
 // =============================================================================
 
 
-template <typename Enum>
+template <typename Enum, typename>
 constexpr std::underlying_type_t<Enum> enum_to_int(Enum const value) noexcept
 {
   return static_cast<std::underlying_type_t<Enum>>(value);
 }
 
-template <typename Enum>
+template <typename Enum, typename>
 constexpr Enum int_to_enum(std::underlying_type_t<Enum> const value) noexcept
 {
   return static_cast<Enum>(value);
 }
 
-template <typename Enum>
-constexpr Enum flags(std::initializer_list<Enum> const values) noexcept
+constexpr result operator|(result const l, result const r) noexcept
 {
-  using int_type = std::underlying_type_t<Enum>;
+  return int_to_enum<result>(enum_to_int(l) | enum_to_int(r));
+}
 
-  // TODO: in C++20, use constexpr accumulate
+constexpr result operator&(result const l, result const r) noexcept
+{
+  return int_to_enum<result>(enum_to_int(l) & enum_to_int(r));
+}
 
-  auto result = static_cast<int_type>(0);
+constexpr result operator^(result const l, result const r) noexcept
+{
+  return int_to_enum<result>(enum_to_int(l) ^ enum_to_int(r));
+}
 
-  for (auto const e : values)
-    result |= static_cast<int_type>(e);
+constexpr result operator~(result const code) noexcept
+{
+  return int_to_enum<result>(~enum_to_int(code));
+}
 
-  return static_cast<Enum>(result);
+constexpr result operator|=(result& l, result const r) noexcept
+{
+  return l = l | r;
+}
+
+constexpr result operator&=(result& l, result const r) noexcept
+{
+  return l = l & r;
+}
+
+constexpr result operator^=(result& l, result const r) noexcept
+{
+  return l = l ^ r;
 }
 
 inline zstring_view errstr(result const code) noexcept
@@ -195,7 +231,7 @@ inline zstring_view errstr(result const code) noexcept
 
 constexpr result primary_result(result const code) noexcept
 {
-  return static_cast<result>(static_cast<int>(code) & 0xFF);
+  return int_to_enum<result>(enum_to_int(code) & 0xFF);
 }
 
 constexpr bool is_error(result const code) noexcept
@@ -209,6 +245,41 @@ constexpr bool is_error(result const code) noexcept
 constexpr bool is_non_error(result const code) noexcept
 {
   return !is_error(code);
+}
+
+constexpr open operator|(open const l, open const r) noexcept
+{
+  return int_to_enum<open>(enum_to_int(l) | enum_to_int(r));
+}
+
+constexpr open operator&(open const l, open const r) noexcept
+{
+  return int_to_enum<open>(enum_to_int(l) & enum_to_int(r));
+}
+
+constexpr open operator^(open const l, open const r) noexcept
+{
+  return int_to_enum<open>(enum_to_int(l) ^ enum_to_int(r));
+}
+
+constexpr open operator~(open const o) noexcept
+{
+  return int_to_enum<open>(~enum_to_int(o));
+}
+
+constexpr open operator|=(open& l, open const r) noexcept
+{
+  return l = l | r;
+}
+
+constexpr open operator&=(open& l, open const r) noexcept
+{
+  return l = l & r;
+}
+
+constexpr open operator^=(open& l, open const r) noexcept
+{
+  return l = l ^ r;
 }
 
 

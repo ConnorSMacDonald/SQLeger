@@ -75,8 +75,7 @@ TEST_CASE("A db can be opened and closed", "[db]")
   SECTION("open v2, close v1")
   {
     db d;
-    auto const r1
-      = db::open_v2(":memory:", d, flags({open::readonly, open::nomutex}));
+    auto const r1 = db::open_v2(":memory:", d, open::readonly | open::nomutex);
 
     REQUIRE(r1 == result::ok);
     REQUIRE(d);
@@ -175,7 +174,7 @@ TEST_CASE("A db can be opened through a constructor-exception interface",
 
   SECTION("open v2")
   {
-    auto d = db(":memory:", flags({open::readonly, open::nomutex}));
+    auto d = db(":memory:", open::readonly | open::nomutex);
     REQUIRE(d);
   }
 

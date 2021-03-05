@@ -12,17 +12,6 @@ TEST_CASE("An enum can be converted to and from an integer", "[constants]")
   REQUIRE(result::perm == int_to_enum<result>(enum_to_int(result::perm)));
 }
 
-TEST_CASE("A set of enums can be converted to a bit mask", "[constants]")
-{
-  constexpr auto f1 = flags({open::create, open::uri});
-
-  REQUIRE(f1 == static_cast<open>(0x00000044));
-
-  constexpr auto f2 = flags<open>();
-
-  REQUIRE(f2 == static_cast<open>(0));
-}
-
 TEST_CASE("A error string for a result code can be retrieved", "[constants]")
 {
   auto const* const cs = sqlite3_errstr(SQLITE_NOMEM);
