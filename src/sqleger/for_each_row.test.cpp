@@ -94,13 +94,13 @@ TEST_CASE("for_each_row", "[for_each_row]")
 
     auto s3 = stmt(d, "SELECT x FROM t"_ss);
 
-    auto callback_not_yet_invoked = false;
+    auto callback_already_invoked = false;
 
     auto const r = for_each_row(s3, [&](auto const ro) {
       REQUIRE(ro.get_stmt_ref().c_ptr() == s3.c_ptr());
 
-      REQUIRE_FALSE(callback_not_yet_invoked);
-      callback_not_yet_invoked = true;
+      REQUIRE_FALSE(callback_already_invoked);
+      callback_already_invoked = true;
 
       // Finalize the statement within the callback such that step returns an
       // error on the next for_each_row iteration
