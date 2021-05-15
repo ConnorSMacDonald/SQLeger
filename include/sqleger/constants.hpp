@@ -231,7 +231,7 @@ inline zstring_view errstr(result const code) noexcept
 
 constexpr result primary_result(result const code) noexcept
 {
-  return int_to_enum<result>(enum_to_int(code) & 0xFF);
+  return code & result{ 0xFF };
 }
 
 constexpr bool is_error(result const code) noexcept
