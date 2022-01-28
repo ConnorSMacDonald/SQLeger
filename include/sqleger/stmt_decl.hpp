@@ -54,6 +54,8 @@ public:
 
   result clear_bindings() noexcept;
 
+  int data_count() noexcept;
+
   zstring_view sql() const noexcept;
 
   constexpr operator bool() const noexcept;

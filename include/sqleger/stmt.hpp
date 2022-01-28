@@ -119,6 +119,12 @@ result stmt_interface<Impl>::clear_bindings() noexcept
 }
 
 template <typename Impl>
+int stmt_interface<Impl>::data_count() noexcept
+{
+  return ::sqlite3_data_count(c_ptr());
+}
+
+template <typename Impl>
 zstring_view stmt_interface<Impl>::sql() const noexcept
 {
   return ::sqlite3_sql(c_ptr());

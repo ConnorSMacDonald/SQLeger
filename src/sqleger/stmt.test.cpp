@@ -381,3 +381,26 @@ TEST_CASE("Bindings can be cleared on a stmt", "[stmt]")
   auto const r2 = s2.step();
   REQUIRE(is_error(r2));
 }
+
+TEST_CASE("stmt_interface::data_count", "[stmt]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL)"_ss);
+
+  REQUIRE(s1.step() == result::done);
+
+  REQUIRE(s1.data_count() == 0);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
+
+  REQUIRE(s2.bind_int(1, 7) == result::ok);
+  REQUIRE(s2.bind_double(2, 3.14) == result::ok);
+  REQUIRE(s2.step() == result::done);
+
+  auto s3 = stmt(d, "SELECT x, y FROM t"_ss);
+
+  REQUIRE(s3.step() == result::row);
+
+  REQUIRE(s3.data_count() == 2);
+}
