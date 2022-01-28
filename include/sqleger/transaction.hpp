@@ -67,23 +67,23 @@ transaction::transaction(db_ref const db_handle,
                          transaction_behavior const behavior) :
   db_ {db_handle}
 {
-  using namespace std::string_literals;
+  using namespace string_span_literals;
 
   auto const behavior_string = [&]() {
     switch (behavior)
     {
       case transaction_behavior::deferred:
-        return " DEFERRED"s;
+        return "BEGIN DEFERRED"_ss;
       case transaction_behavior::exclusive:
-        return " EXCLUSIVE"s;
+        return "BEGIN EXCLUSIVE"_ss;
       case transaction_behavior::immediate:
-        return " IMMEDIATE"s;
+        return "BEGIN IMMEDIATE"_ss;
     }
 
-    return ""s;
+    return ""_ss;
   }();
 
-  auto begin_stmt = stmt(db_, "BEGIN"s + behavior_string);
+  auto begin_stmt = stmt(db_, behavior_string);
 
   if (auto const r = begin_stmt.step(); is_error(r))
     throw result_exception(r);
