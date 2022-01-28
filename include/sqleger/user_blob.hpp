@@ -70,7 +70,7 @@ template <typename T, typename Allocator>
 basic_user_blob<Size>::basic_user_blob(
   std::vector<T, Allocator> const& data,
   destructor_type const destructor) noexcept :
-  data_ {reinterpret_cast<void const*>(data.data())},
+  data_ {static_cast<void const*>(data.data())},
   size_bytes_ {static_cast<size_type>(data.size() * sizeof(T))},
   destructor_ {destructor}
 {
@@ -82,7 +82,7 @@ basic_user_blob<Size>::basic_user_blob(
   ContiguousItr const begin,
   ContiguousItr const end,
   destructor_type const destructor) noexcept :
-  data_ {reinterpret_cast<void const*>(std::addressof(*begin))},
+  data_ {static_cast<void const*>(std::addressof(*begin))},
   size_bytes_ {static_cast<size_type>(
     std::distance(begin, end)
     * sizeof(typename std::iterator_traits<ContiguousItr>::value_type))},
@@ -96,7 +96,7 @@ basic_user_blob<Size>::basic_user_blob(
   T const* const data,
   size_type const size,
   destructor_type const destructor) noexcept :
-  data_ {reinterpret_cast<void const*>(data)},
+  data_ {static_cast<void const*>(data)},
   size_bytes_ {static_cast<size_type>(size * sizeof(T))},
   destructor_ {destructor}
 {

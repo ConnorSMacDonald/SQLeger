@@ -25,25 +25,22 @@ public:
   template <typename T, std::size_t N>
   std::array<T, N> as_array() const noexcept;
 
-  constexpr std::byte const* ptr() const noexcept { return ptr_; }
+  constexpr void const* ptr() const noexcept { return ptr_; }
 
 private:
-  std::byte const* ptr_ = nullptr;
+  void const* ptr_ = nullptr;
 };
 
 
 // =============================================================================
 
 
-blob_data::blob_data(void const* const ptr) noexcept :
-  ptr_ {reinterpret_cast<std::byte const*>(ptr)}
-{
-}
+blob_data::blob_data(void const* const ptr) noexcept : ptr_ {ptr} {}
 
 template <typename T>
 T const* blob_data::as_pointer() const noexcept
 {
-  return reinterpret_cast<T const*>(ptr_);
+  return static_cast<T const*>(ptr_);
 }
 
 template <typename T, typename Allocator>
@@ -52,9 +49,9 @@ blob_data::as_vector(std::size_t const size,
                      Allocator const& allocator) const noexcept
 {
   auto v = std::vector<T, Allocator>(size, allocator);
-  std::memcpy(reinterpret_cast<void*>(v.data()),
-              reinterpret_cast<void const*>(ptr_),
-              size * sizeof(T));
+
+  std::memcpy(static_cast<void*>(v.data()), ptr_, size * sizeof(T));
+
   return v;
 }
 
@@ -62,9 +59,9 @@ template <typename T, std::size_t N>
 std::array<T, N> blob_data::as_array() const noexcept
 {
   auto a = std::array<T, N>();
-  std::memcpy(reinterpret_cast<void*>(a.data()),
-              reinterpret_cast<void const*>(ptr_),
-              N * sizeof(T));
+
+  std::memcpy(static_cast<void*>(a.data()), ptr_, N * sizeof(T));
+
   return a;
 }
 

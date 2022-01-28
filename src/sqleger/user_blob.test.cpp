@@ -17,7 +17,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(a);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == a.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == a.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == transient);
   }
@@ -28,7 +28,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(a, _static);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == a.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == a.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == _static);
   }
@@ -39,7 +39,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == transient);
   }
@@ -50,7 +50,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v, _static);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == _static);
   }
@@ -61,7 +61,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v.begin(), v.end());
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == transient);
   }
@@ -72,7 +72,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v.begin(), v.end(), _static);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == _static);
   }
@@ -83,7 +83,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v.data(), static_cast<int>(v.size()));
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == transient);
   }
@@ -94,7 +94,7 @@ TEST_CASE("A user blob can be constructed", "[user_blob]")
 
     auto const ub = user_blob(v.data(), static_cast<int>(v.size()), _static);
 
-    REQUIRE(reinterpret_cast<uint64_t const*>(ub.data()) == v.data());
+    REQUIRE(static_cast<uint64_t const*>(ub.data()) == v.data());
     REQUIRE(ub.size_bytes() == 80);
     REQUIRE(ub.destructor() == _static);
   }

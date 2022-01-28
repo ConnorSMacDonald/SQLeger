@@ -13,18 +13,18 @@ TEST_CASE("Blob data holds a byte pointer", "[blob_data]")
 {
   auto const v = std::vector<uint64_t>({1, 2, 3});
 
-  auto const* const void_ptr = reinterpret_cast<void const*>(v.data());
+  auto const* const void_ptr = static_cast<void const*>(v.data());
 
   auto const bd = blob_data(void_ptr);
 
-  REQUIRE(void_ptr == reinterpret_cast<void const*>(bd.ptr()));
+  REQUIRE(void_ptr == static_cast<void const*>(bd.ptr()));
 }
 
 TEST_CASE("Blob data can be converted to a pointer", "[blob_data]")
 {
   auto const v = std::vector<uint64_t>({1, 2, 3});
 
-  auto const bd = blob_data(reinterpret_cast<void const*>(v.data()));
+  auto const bd = blob_data(static_cast<void const*>(v.data()));
 
   auto const* const ptr = bd.as_pointer<uint64_t>();
 
@@ -35,7 +35,7 @@ TEST_CASE("Blob data can be converted to a vector", "[blob_data]")
 {
   auto const v1 = std::vector<std::pair<int, int>>({{1, 2}, {2, 3}});
 
-  auto const bd = blob_data(reinterpret_cast<void const*>(v1.data()));
+  auto const bd = blob_data(static_cast<void const*>(v1.data()));
 
   auto const v2 = bd.as_vector<std::pair<int, int>>(2);
 
@@ -46,7 +46,7 @@ TEST_CASE("Blob data can be converted to an array", "[blob_data]")
 {
   std::array<int, 2> const a1 {1, 6};
 
-  auto const bd = blob_data(reinterpret_cast<void const*>(a1.data()));
+  auto const bd = blob_data(static_cast<void const*>(a1.data()));
 
   auto const a2 = bd.as_array<int, 2>();
 
