@@ -120,3 +120,69 @@ TEST_CASE("Columns", "[row]")
   auto c6 = ro.column_value(6);
   REQUIRE(c6.type() == datatype::null);
 }
+
+TEST_CASE("row::data_count", "[row]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL)"_ss);
+  REQUIRE(s1.step() == result::done);
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
+  REQUIRE(s2.bind_int(1, 7) == result::ok);
+  REQUIRE(s2.bind_double(2, 3.14) == result::ok);
+  REQUIRE(s2.step() == result::done);
+
+  auto s3 = stmt(d, "SELECT x, y FROM t"_ss);
+  REQUIRE(s3.step() == result::row);
+
+  auto r = row(s3);
+
+  REQUIRE(r.data_count() == 2);
+}
+
+TEST_CASE("row::iterator", "[row]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL)"_ss);
+  REQUIRE(s1.step() == result::done);
+
+  auto const x = 7;
+  auto const y = 3.14;
+
+  auto s2 = stmt(d, "INSERT INTO t VALUES(?1, ?2)"_ss);
+  REQUIRE(s2.bind_int(1, x) == result::ok);
+  REQUIRE(s2.bind_double(2, y) == result::ok);
+  REQUIRE(s2.step() == result::done);
+
+  auto s3 = stmt(d, "SELECT x, y FROM t"_ss);
+  REQUIRE(s3.step() == result::row);
+
+  auto r = row(s3);
+
+  auto b = r.begin();
+  auto e = r.end();
+
+  REQUIRE_FALSE(b == e);
+  REQUIRE(b != e);
+
+  REQUIRE(b->type() == datatype::integer);
+  REQUIRE(b->_int() == x);
+
+  ++b;
+
+  REQUIRE_FALSE(b == e);
+  REQUIRE(b != e);
+
+  REQUIRE(b->type() == datatype::_float);
+  REQUIRE(b->_double() == y);
+
+  auto old_b = b++;
+
+  REQUIRE(old_b->type() == datatype::_float);
+  REQUIRE(old_b->_double() == y);
+
+  REQUIRE(b == e);
+  REQUIRE_FALSE(b != e);
+}

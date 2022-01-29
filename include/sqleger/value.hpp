@@ -58,6 +58,10 @@ public:
 
   explicit constexpr value(c_type* c_ptr) noexcept;
 
+  inline value(value const& other) noexcept;
+
+  inline value& operator=(value const& other) noexcept;
+
   constexpr value(value&& other) noexcept;
 
   inline value& operator=(value&& other) noexcept;
@@ -163,6 +167,16 @@ constexpr auto value_interface<Impl>::c_ptr() const noexcept -> c_type*
 }
 
 constexpr value::value(c_type* const c_ptr) noexcept : c_ptr_ {c_ptr} {}
+
+value::value(value const& other) noexcept : value {other.dup()} {}
+
+value& value::operator=(value const& other) noexcept
+{
+  if (this == &other)
+    return *this;
+
+  return *this = other.dup();
+}
 
 constexpr value::value(value&& other) noexcept : c_ptr_ {other.take_c_ptr()} {}
 
