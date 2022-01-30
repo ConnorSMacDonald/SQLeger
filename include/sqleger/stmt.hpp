@@ -208,6 +208,16 @@ result stmt::do_finalize() noexcept
   return int_to_enum<result>(::sqlite3_finalize(c_ptr_));
 }
 
+inline bool operator==(stmt_ref const& l, stmt_ref const& r) noexcept
+{
+  return l.c_ptr_ == r.c_ptr_;
+}
+
+inline bool operator!=(stmt_ref const& l, stmt_ref const& r) noexcept
+{
+  return !(l == r);
+}
+
 
 } // namespace sqleger
 

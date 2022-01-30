@@ -60,17 +60,9 @@ public:
 
   zstring_view sql() const noexcept;
 
-  constexpr operator bool() const noexcept;
+  explicit constexpr operator bool() const noexcept;
 
 private:
-  template <typename LeftImpl, typename RightImpl>
-  friend bool operator==(stmt_interface<LeftImpl> const& l,
-                         stmt_interface<RightImpl> const& r) noexcept;
-
-  template <typename LeftImpl, typename RightImpl>
-  friend bool operator!=(stmt_interface<LeftImpl> const& l,
-                         stmt_interface<RightImpl> const& r) noexcept;
-
   constexpr c_type* c_ptr() const noexcept;
 };
 
@@ -128,8 +120,14 @@ public:
   constexpr c_type* c_ptr() const noexcept { return c_ptr_; }
 
 private:
+  friend bool operator==(stmt_ref const& l, stmt_ref const& r) noexcept;
+  friend bool operator!=(stmt_ref const& l, stmt_ref const& r) noexcept;
+
   c_type* c_ptr_ = nullptr;
 };
+
+inline bool operator==(stmt_ref const& l, stmt_ref const& r) noexcept;
+inline bool operator!=(stmt_ref const& l, stmt_ref const& r) noexcept;
 
 
 } // namespace sqleger

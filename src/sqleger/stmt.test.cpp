@@ -417,3 +417,20 @@ TEST_CASE("stmt_interface::data_count", "[stmt]")
 
   REQUIRE(s3.data_count() == 2);
 }
+
+TEST_CASE("stmt_ref == and !=", "[stmt]")
+{
+  auto d = db(":memory:");
+
+  auto s1 = stmt(d, "CREATE TABLE t(x INTEGER NOT NULL, y REAL NOT NULL)"_ss);
+
+  auto sr = s1.ref();
+
+  REQUIRE(s1.ref() == sr);
+  REQUIRE_FALSE(s1.ref() != sr);
+
+  auto s3 = stmt(d, "CREATE TABLE u(w INTEGER NOT NULL, z REAL NOT NULL)"_ss);
+
+  REQUIRE_FALSE(s3.ref() == sr);
+  REQUIRE(s3.ref() != sr);
+}
