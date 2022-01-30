@@ -53,6 +53,12 @@ result stmt_interface<Impl>::bind_text(int const index,
 }
 
 template <typename Impl>
+int stmt_interface<Impl>::bind_parameter_count() noexcept
+{
+  return ::sqlite3_bind_parameter_count(c_ptr());
+}
+
+template <typename Impl>
 blob_data stmt_interface<Impl>::column_blob(int const index) noexcept
 {
   return ::sqlite3_column_blob(c_ptr(), index);

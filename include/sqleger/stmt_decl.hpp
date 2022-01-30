@@ -32,6 +32,8 @@ public:
 
   result bind_text(int index, user_text const& text) noexcept;
 
+  int bind_parameter_count() noexcept;
+
   blob_data column_blob(int index) noexcept;
 
   double column_double(int index) noexcept;
@@ -61,6 +63,14 @@ public:
   constexpr operator bool() const noexcept;
 
 private:
+  template <typename LeftImpl, typename RightImpl>
+  friend bool operator==(stmt_interface<LeftImpl> const& l,
+                         stmt_interface<RightImpl> const& r) noexcept;
+
+  template <typename LeftImpl, typename RightImpl>
+  friend bool operator!=(stmt_interface<LeftImpl> const& l,
+                         stmt_interface<RightImpl> const& r) noexcept;
+
   constexpr c_type* c_ptr() const noexcept;
 };
 
