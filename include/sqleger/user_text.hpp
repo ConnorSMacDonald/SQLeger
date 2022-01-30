@@ -21,7 +21,7 @@ public:
 
   static constexpr auto zstring_size = string_span_type::zstring_size;
 
-  basic_user_text(string_span span,
+  basic_user_text(string_span_type span,
                   destructor_type destructor = transient) noexcept;
 
   constexpr char_type const* data() const noexcept { return data_; }
@@ -44,7 +44,7 @@ using user_text = basic_user_text<char>;
 
 template <typename Char>
 basic_user_text<Char>::basic_user_text(
-  string_span const span,
+  string_span_type const span,
   destructor_type const destructor) noexcept :
   data_ {span.data()},
   size_bytes_ {static_cast<size_type>(span.length() * sizeof(Char))},
