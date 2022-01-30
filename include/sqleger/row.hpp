@@ -56,15 +56,15 @@ public:
 
   pointer operator->() noexcept { return &value_; }
 
-  iterator& operator++() noexcept;
-  iterator operator++(int) noexcept;
+  inline iterator& operator++() noexcept;
+  inline iterator operator++(int) noexcept;
 
 private:
   friend row;
 
   inline iterator(row r, int start_index) noexcept;
 
-  void read();
+  inline void read();
 
   friend bool operator==(iterator const& l, iterator const& r) noexcept;
   friend bool operator!=(iterator const& l, iterator const& r) noexcept;
